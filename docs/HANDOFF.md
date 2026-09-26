@@ -328,4 +328,44 @@ The very next task for **OpenCode** is **Task 2.1**:
 
 ### 11.4 Next Task
 
-Awaiting Integravity's review of Phase 3 completion. Next assigned work per `docs/TASKS.md`: **Phase 4 (Service Detail Pages)**.
+Awaiting Integravity's review of Phase 3 completion. Next assigned work per `docs/TASKS.md`: **Phase 4 (Service Detail Pages)** — Task 4.1 completed in §12 below.
+
+---
+
+## 12. Task 4.1 Implementation Results (OpenCode)
+
+**Status: COMPLETE — all acceptance criteria met and verified (2026-09-27). Phase 4 (Dynamic Service Pages) complete.**
+
+### 12.1 Files Created / Modified
+
+| File                                        | Change             | Purpose                                                                                                                                                                                                                                                                                                                                                                            |
+| :------------------------------------------ | :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/config/services.ts`                    | Created            | Single source of truth for the service catalog: `ServiceDetail` records for all 4 slugs (summary, framework badges, deliverables, problem-context paragraphs, methodology milestones, optional `pricingNote`), slug-keyed `services` lookup, `serviceList` array, and the `hasPricingNote()` pricing-rule guard                                                                    |
+| `src/app/(public)/services/page.tsx`        | Rewritten          | Comprehensive catalog: header block + 2-column card grid — framework badge pills, linked discipline titles, summaries, key-deliverables checklists, "View service →" links — closing with the shared `ConsultationCta` banner                                                                                                                                                      |
+| `src/app/(public)/services/[slug]/page.tsx` | Rewritten          | Next 16 dynamic template: awaited `params`, `generateStaticParams()` returning the 4 known slugs, `notFound()` for unrecognized slugs, `generateMetadata()` with per-slug title/description/canonical/OG, editorial deep dive (hero + framework badges + conditional pricing note + problem-context band + deliverables checklist + numbered methodology milestones) + closing CTA |
+| `src/components/sections/ServicesGrid.tsx`  | Modified (comment) | Sync-comment retargeted from the old `plannedServices` scaffold to `src/config/services.ts` — no behavioral change (Task 3.2 component untouched otherwise)                                                                                                                                                                                                                        |
+| `tests/ui/services-pages.test.tsx`          | Created            | 8 tests: catalog headings/links/deliverables/badges, catalog CTA banner, detail deep-dive content, pricing-note visibility for populated vs. null, `hasPricingNote()` null/empty/whitespace unit cases, `notFound()` rejection, `generateStaticParams` slugs, dynamic metadata + canonical + OpenGraph                                                                             |
+
+### 12.2 Design Decisions
+
+- **Shared catalog module**: slugs/content now live in `src/config/services.ts` instead of being duplicated per page — the catalog, the detail template, and (via the updated sync comment) the homepage `ServicesGrid` all reference one source. This becomes the natural adapter for the Phase 6-7 CMS `services` table.
+- **Pricing Rule enforcement**: rendering goes exclusively through `hasPricingNote()` (`Boolean(note?.trim())`), so `null`, `""`, and whitespace-only values render **nothing** — no empty box, no "Pricing note" label. The wetland service ships a populated note (demonstrates display); the other three are `null`. Both paths are tested, plus unit coverage of the empty-string CMS edge case.
+- **`notFound()` over silent fallback**: unknown slugs throw Next's `notFound()` (default `dynamicParams` still routes them through the page at request time), replacing the old fail-safe placeholder copy; `generateMetadata` returns catalog-level fallback copy for unknown slugs rather than leaking the raw slug into titles.
+- **SSG proof**: the build now prerenders all 4 detail pages (`● /services/...` under `/services/[slug]`), taking the route count from 17 to 21.
+- **Editorial detail template**: alternating ivory → muted (problem context) → ivory (deliverables + milestones) bands; milestones rendered as an `<ol>` with hairline top rules and zero-padded numbers, echoing the homepage approach grid; hero carries `buttonVariants` CTAs ("Discuss this service" / "All services").
+- **Badge content**: framework pills cover the required references — CWA (delineation/permitting), NEPA (permitting/planning), ASTM (assessments) — and are asserted by tests on both pages.
+- **Test approach**: `next/navigation` mocked so `notFound()` throws a deterministic `NEXT_NOT_FOUND` error asserted via `rejects.toThrow`; detail page invoked directly with `Promise.resolve({ slug })` (async RSC functions return plain element trees — no server needed).
+
+### 12.3 Verification Results (2026-09-27)
+
+| Command                | Result                                                      |
+| :--------------------- | :---------------------------------------------------------- |
+| `npm run typecheck`    | ✅ PASSED (0 errors)                                        |
+| `npm run lint`         | ✅ PASSED (0 errors, 0 warnings)                            |
+| `npm run test`         | ✅ PASSED (64/64 — 13 node + 51 UI)                         |
+| `npm run build`        | ✅ PASSED (21/21 routes — 4 service pages SSG'd, Turbopack) |
+| `npm run format:check` | ✅ PASSED (all files)                                       |
+
+### 12.4 Next Task
+
+Awaiting Integravity's review of Task 4.1. **Phase 4 has no remaining tasks** — next assigned work per `docs/TASKS.md`: **Task 5.1: Interactive Consultation Request Form** (Phase 5).

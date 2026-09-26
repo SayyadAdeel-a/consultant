@@ -142,13 +142,21 @@ Replace the placeholder header and footer in `src/app/(public)/layout.tsx` with 
 ### Task 4.1: Service Overview & Dynamic Route Template
 
 - **Assignee**: OpenCode
+- **Status**: **COMPLETE (verified 2026-09-27)**
 - **Files**:
   - `src/app/(public)/services/page.tsx`
   - `src/app/(public)/services/[slug]/page.tsx`
+  - `src/config/services.ts` (shared catalog data + `hasPricingNote` guard)
+  - `tests/ui/services-pages.test.tsx` (8 tests)
 - **Criteria**:
-  - Dynamic routing with `params: Promise<{ slug: string }>`.
-  - Optional pricing note logic: hidden if null/empty.
-  - Metadata generation with canonical URLs.
+  - [x] Dynamic routing with `params: Promise<{ slug: string }>`.
+  - [x] Optional pricing note logic: hidden if null/empty.
+  - [x] Metadata generation with canonical URLs.
+  - [x] Catalog with deliverables, framework badges, links, and closing CTA.
+  - [x] `generateStaticParams()` (4 slugs), `notFound()` for unknown slugs, rich editorial detail template.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (64/64), `npm run build` (21/21).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §12 for implementation details and verification results. **Phase 4 complete.**
 
 ---
 

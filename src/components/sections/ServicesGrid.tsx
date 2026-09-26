@@ -11,9 +11,9 @@ interface ServiceCard {
 }
 
 /**
- * Core service families. Slugs mirror the planned routes declared in
- * `src/app/(public)/services/page.tsx` — keep both in sync until the CMS
- * services table (Phase 6/7) becomes the source of truth.
+ * Core service families. Slugs mirror the catalog data in
+ * `src/config/services.ts` — keep both in sync until the CMS services
+ * table (Phase 6/7) becomes the source of truth.
  */
 const services: ServiceCard[] = [
   {
