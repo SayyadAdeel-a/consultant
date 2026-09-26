@@ -212,4 +212,41 @@ The very next task for **OpenCode** is **Task 2.1**:
 
 ### 8.4 Next Task
 
-**Task 3.2: Core Services Grid & Industries Section** (`ServicesGrid`, `IndustriesSection` in `src/components/sections/`).
+**Task 3.2: Core Services Grid & Industries Section** (`ServicesGrid`, `IndustriesSection` in `src/components/sections/`) — **completed in §9 below.**
+
+---
+
+## 9. Task 3.2 Implementation Results (OpenCode)
+
+**Status: COMPLETE — all acceptance criteria met and verified (2026-09-27).**
+
+### 9.1 Files Created / Modified
+
+| File                                            | Change           | Purpose                                                                                                                                                                                                                                                                                     |
+| :---------------------------------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/components/sections/ServicesGrid.tsx`      | Created (server) | 4 core service cards (Wetland Delineation, Environmental Permitting, Phase I/II ESAs, Ecological Planning): Lucide icon tile, title, description, whole-card link to `/services/[slug]`, 1px border → `hover:border-brand-sage` (`transition-all duration-300`), staggered `SlideUp` reveal |
+| `src/components/sections/IndustriesSection.tsx` | Created (server) | Editorial two-column layout: heading block left, ruled index of 4 target sectors (Infrastructure, Commercial Development, Renewable Energy, Municipal/Watershed) with compliance-relevance descriptions, `FadeIn` reveal                                                                    |
+| `src/components/sections/index.ts`              | Modified         | Added `ServicesGrid` / `IndustriesSection` exports                                                                                                                                                                                                                                          |
+| `tests/ui/services-industries.test.tsx`         | Created          | 6 tests: 4 card headings, `/services/[slug]` hrefs, Lucide icon per card, border/hover classes, sector headings, compliance-relevance descriptions                                                                                                                                          |
+
+### 9.2 Design Decisions
+
+- **Real route links**: card slugs mirror the planned routes already declared in `src/app/(public)/services/page.tsx` (`wetland-delineation`, `environmental-permitting`, `environmental-assessments`, `environmental-planning`) — no broken links today, and a code comment pins both files to stay in sync until Phase 6/7 CMS data replaces them.
+- **Spec display titles kept**: cards show the required titles (Phase I/II ESAs, Ecological Planning) while linking to the existing slug contract.
+- **Valid list semantics**: `SlideUp` sits _inside_ each `<li>` (wrapping the card) so `<ul>` children remain `<li>` elements; `h-full` chain keeps cards equal-height per grid row.
+- **Card interaction**: whole-card anchor with icon tile inverting to Forest/ivory on hover, Sage border transition, and a nudging Learn-more arrow (`group-hover:translate-x-1`) — all within the design system's 300ms / no-shadow elevation rules.
+- **Section rhythm**: muted surface for services (white cards pop) → ivory surface for industries (ruled index), continuing the forest → ivory → muted → ivory editorial cadence from Tasks 3.1.
+
+### 9.3 Verification Results (2026-09-27)
+
+| Command                | Result                                       |
+| :--------------------- | :------------------------------------------- |
+| `npm run typecheck`    | ✅ PASSED (0 errors)                         |
+| `npm run lint`         | ✅ PASSED (0 errors, 0 warnings)             |
+| `npm run test`         | ✅ PASSED (44/44 — 13 node + 31 UI)          |
+| `npm run build`        | ✅ PASSED (17/17 routes compiled, Turbopack) |
+| `npm run format:check` | ✅ PASSED (all files)                        |
+
+### 9.4 Next Task
+
+**Task 3.3: Case Study Spotlight & Approach Timeline** (`CaseStudySpotlight`, `ApproachSection` in `src/components/sections/`).

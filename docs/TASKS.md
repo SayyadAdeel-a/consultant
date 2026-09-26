@@ -83,12 +83,19 @@ Replace the placeholder header and footer in `src/app/(public)/layout.tsx` with 
 ### Task 3.2: Core Services Grid & Industries Section
 
 - **Assignee**: OpenCode
+- **Status**: **COMPLETE (verified 2026-09-27)**
 - **Files**:
   - `src/components/sections/ServicesGrid.tsx`
   - `src/components/sections/IndustriesSection.tsx`
+  - `src/components/sections/index.ts` (barrel exports)
+  - `tests/ui/services-industries.test.tsx` (6 tests)
 - **Criteria**:
-  - Displays the 4 core services (Wetland, Permitting, ESAs, Planning).
-  - Hover states on cards use subtle Sage border transitions.
+  - [x] Displays the 4 core services (Wetland, Permitting, ESAs, Planning).
+  - [x] Hover states on cards use subtle Sage border transitions.
+  - [x] Cards link to real `/services/[slug]` routes with icon, title, and description.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (44/44), `npm run build` (17/17).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §9 for implementation details and verification results.
 
 ### Task 3.3: Case Study Spotlight & Approach Timeline
 

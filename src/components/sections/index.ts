@@ -8,3 +8,5 @@
  */
 export { HeroSection } from "./HeroSection";
 export { CredibilitySection } from "./CredibilitySection";
+export { ServicesGrid } from "./ServicesGrid";
+export { IndustriesSection } from "./IndustriesSection";
