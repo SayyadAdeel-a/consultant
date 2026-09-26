@@ -1,0 +1,55 @@
+import { z } from "zod";
+
+/**
+ * Contact inquiry validation, shared by the client form and the server
+ * route handler so the rules can never drift (see docs/ARCHITECTURE.md).
+ *
+ * The honeypot field is intentionally permissive on the client (hidden
+ * input) and enforced on the server: any non-empty value is spam.
+ */
+export const INQUIRY_TYPES = [
+  "general",
+  "wetland-delineation",
+  "permitting",
+  "assessment",
+  "planning",
+  "other",
+] as const;
+
+export const contactInquirySchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, "Please enter your full name.")
+    .max(120, "Name is too long."),
+  email: z.email("Please enter a valid email address.").max(254),
+  phone: z
+    .string()
+    .trim()
+    .max(40, "Phone number is too long.")
+    .optional()
+    .or(z.literal("")),
+  organization: z
+    .string()
+    .trim()
+    .max(160, "Organization name is too long.")
+    .optional()
+    .or(z.literal("")),
+  inquiryType: z.enum(INQUIRY_TYPES),
+  message: z
+    .string()
+    .trim()
+    .min(20, "Please provide at least 20 characters so we can help.")
+    .max(5000, "Message is too long."),
+  consent: z.literal(true, {
+    message: "Please accept the privacy policy to continue.",
+  }),
+  /** Honeypot — must remain empty; humans never see this field. */
+  companyWebsite: z
+    .string()
+    .max(0, "Spam detected.")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type ContactInquiryInput = z.infer<typeof contactInquirySchema>;
