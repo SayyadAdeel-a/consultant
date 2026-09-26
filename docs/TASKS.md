@@ -100,24 +100,40 @@ Replace the placeholder header and footer in `src/app/(public)/layout.tsx` with 
 ### Task 3.3: Case Study Spotlight & Approach Timeline
 
 - **Assignee**: OpenCode
+- **Status**: **COMPLETE (verified 2026-09-27)**
 - **Files**:
   - `src/components/sections/CaseStudySpotlight.tsx`
   - `src/components/sections/ApproachSection.tsx`
+  - `src/components/sections/index.ts` (barrel exports)
+  - `tests/ui/case-study-approach.test.tsx` (6 tests)
 - **Criteria**:
-  - Editorial split-screen layout for featured project.
-  - 4-step phased consulting methodology (Assessment -> Delineation -> Permitting -> Compliance).
+  - [x] Editorial split-screen layout for featured project.
+  - [x] 4-step phased consulting methodology (Assessment -> Delineation -> Permitting -> Compliance).
+  - [x] Casco Bay project with client metadata, challenge/solution copy, quantifiable results, `/contact` CTA, and mandatory disclaimer.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (50/50), `npm run build` (17/17).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §10 for implementation details and verification results.
 
 ### Task 3.4: Team Credentials, FAQs & Consultation CTA
 
 - **Assignee**: OpenCode
+- **Status**: **COMPLETE (verified 2026-09-27)**
 - **Files**:
   - `src/components/sections/TeamSection.tsx`
   - `src/components/sections/FaqSection.tsx`
   - `src/components/sections/ConsultationCta.tsx`
-  - `src/app/(public)/page.tsx`
+  - `src/components/sections/index.ts` (barrel exports)
+  - `src/app/(public)/page.tsx` (nine-section assembly)
+  - `tests/ui/homepage.test.tsx` (6 tests)
 - **Criteria**:
-  - Assembles all 8 sections onto the homepage.
-  - Fully accessible accordion for FAQs.
+  - [x] Assembles all 8 sections onto the homepage.
+  - [x] Fully accessible accordion for FAQs.
+  - [x] Team cards with PWS/PE/CPSS/CEP credentials and agency backgrounds (`id="team"`).
+  - [x] FAQ answers 4 technical questions with full ARIA + keyboard navigation (`id="faq"`).
+  - [x] High-contrast closing CTA banner with `/contact`, phone, and email channels.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (56/56), `npm run build` (17/17).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §11 for implementation details and verification results. **Phase 3 complete.**
 
 ---
 

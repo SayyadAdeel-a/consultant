@@ -249,4 +249,83 @@ The very next task for **OpenCode** is **Task 2.1**:
 
 ### 9.4 Next Task
 
-**Task 3.3: Case Study Spotlight & Approach Timeline** (`CaseStudySpotlight`, `ApproachSection` in `src/components/sections/`).
+**Task 3.3: Case Study Spotlight & Approach Timeline** (`CaseStudySpotlight`, `ApproachSection` in `src/components/sections/`) — **completed in §10 below.**
+
+---
+
+## 10. Task 3.3 Implementation Results (OpenCode)
+
+**Status: COMPLETE — all acceptance criteria met and verified (2026-09-27).**
+
+### 10.1 Files Created / Modified
+
+| File                                             | Change           | Purpose                                                                                                                                                                                                                                                                                                                      |
+| :----------------------------------------------- | :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/components/sections/CaseStudySpotlight.tsx` | Created (server) | Editorial split-screen on the Forest Green authoritative-callout surface: narrative column (client metadata `dl`, ecological challenge, technical solution, 3 quantifiable results — 42 acres restored / 100% concurrence / 11-month timeline, `/contact` CTA, mandatory disclaimer) beside a sticky ivory site-record plate |
+| `src/components/sections/ApproachSection.tsx`    | Created (server) | Editorial 4-column grid (`ol`) with hairline Sage top rules and display-serif step numbers: 01 Desktop Constraints → 02 Field Delineation → 03 Permitting Strategy → 04 Compliance & Monitoring                                                                                                                              |
+| `src/components/sections/index.ts`               | Modified         | Added `CaseStudySpotlight` / `ApproachSection` exports                                                                                                                                                                                                                                                                       |
+| `tests/ui/case-study-approach.test.tsx`          | Created          | 6 tests: project metadata + `/#projects` anchor, challenge/solution copy, results metrics, CTA + disclaimer, phase order + `/#approach` anchor, step numbers/hairlines + phase descriptions                                                                                                                                  |
+
+### 10.2 Design Decisions
+
+- **Nav anchors wired**: the section carries `id="projects"` and `id="approach"`, making the existing `siteConfig` nav links `/#projects` and `/#approach` resolve to real targets (both IDs asserted in tests).
+- **Forest Green callout surface**: the featured case study uses the design system's "authoritative callout" treatment (Forest background, ivory/sage text), breaking the ivory run — hero forest → credibility ivory → services muted → industries ivory → **case study forest** → approach ivory.
+- **Split-screen without photography**: `public/images/` is empty, so the media column is a typographic "site record" plate (coordinates, site type, hydrology, works window) styled as a field-notebook spec sheet — sticky on `lg` so it stays in view while reading the narrative.
+- **Copy placed in JS constants**: all prose lives in typed consts (not inline JSX text), which avoids entity/quote pitfalls and keeps test regexes stable.
+- **Disclaimer**: uses the canonical mandatory string verbatim: "All illustrative statistics, certifications, and case studies shown are demonstrations."
+- **Approach semantics**: rendered as an ordered list (`<ol>`) — sequence is part of the methodology — with `border-t border-brand-sage` hairlines per step, matching the credibility-section rule language.
+
+### 10.3 Verification Results (2026-09-27)
+
+| Command                | Result                                       |
+| :--------------------- | :------------------------------------------- |
+| `npm run typecheck`    | ✅ PASSED (0 errors)                         |
+| `npm run lint`         | ✅ PASSED (0 errors, 0 warnings)             |
+| `npm run test`         | ✅ PASSED (50/50 — 13 node + 37 UI)          |
+| `npm run build`        | ✅ PASSED (17/17 routes compiled, Turbopack) |
+| `npm run format:check` | ✅ PASSED (all files)                        |
+
+### 10.4 Next Task
+
+**Task 3.4: Team Credentials, FAQs & Consultation CTA** (`TeamSection`, `FaqSection`, `ConsultationCta` in `src/components/sections/` + homepage assembly in `src/app/(public)/page.tsx`) — **completed in §11 below. Phase 3 complete.**
+
+---
+
+## 11. Task 3.4 Implementation Results (OpenCode)
+
+**Status: COMPLETE — all acceptance criteria met and verified (2026-09-27). Phase 3 (Homepage Sections) finished.**
+
+### 11.1 Files Created / Modified
+
+| File                                          | Change           | Purpose                                                                                                                                                                                                                                                                                                                                                                      |
+| :-------------------------------------------- | :--------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/components/sections/TeamSection.tsx`     | Created (server) | `id="team"` section on the muted surface: 4 editorial white cards — initials monogram, name, role, Sage-hairline credential chips (**PWS, PE, CPSS, CEP**), and agency background summaries (Army Corps, state DOT, NRCS, planning commission); staggered `SlideUp` reveal                                                                                                   |
+| `src/components/sections/FaqSection.tsx`      | Created (client) | `id="faq"` split-layout accessible accordion: 4 technical answers (delineation regulations, ASTM E1527-21/AAI triggers, permitting durations, bespoke fee proposals), WAI-ARIA pattern with `aria-expanded`/`aria-controls`, labelled regions, Arrow/Home/End key navigation, single-open panels with first open by default, `prefers-reduced-motion`-aware height animation |
+| `src/components/sections/ConsultationCta.tsx` | Created (server) | High-contrast Forest Green closing banner: headline, ivory `/contact` CTA, plus direct `tel:` and `mailto:` channel buttons (contact values mirrored from the Footer until Phase 6/7 CMS wiring)                                                                                                                                                                             |
+| `src/components/sections/index.ts`            | Modified         | Added `TeamSection` / `FaqSection` / `ConsultationCta` exports                                                                                                                                                                                                                                                                                                               |
+| `src/app/(public)/page.tsx`                   | Modified         | Scaffold replaced by the complete 9-section narrative (hero → credibility → services → industries → case study → approach → team → FAQ → CTA); metadata description now reuses `siteConfig.description`                                                                                                                                                                      |
+| `tests/ui/homepage.test.tsx`                  | Created          | 6 tests: 9-section structure + nav anchor ids + heading order, team credentials/agency backgrounds, accordion ARIA toggle + `aria-controls` wiring, Arrow/Home/End keyboard navigation, CTA banner channels                                                                                                                                                                  |
+
+### 11.2 Design Decisions
+
+- **Anchor contract completed**: homepage now provides all four nav anchor targets — `#projects`, `#approach`, `#faq` (nav-linked), plus the requested `#team`; every id is asserted in tests.
+- **FaqSection is the only fully client section**: it carries `"use client"` for the accordion; everything else stays a server component with client animation wrappers only. The accordion is hand-built (no `ui/accordion` primitive exists in the component set) following the WAI-ARIA accordion pattern — real `<button>` inside `<h3>`, `aria-controls` → panel region `aria-labelledby` back to the trigger, focus moved by Arrow keys with Home/End wrapping.
+- **Accordion details**: one panel open at a time, **first open by default** so answers exist in the prerendered HTML (SEO/no-JS content); panel height/opacity animation reuses the shared `DEFAULT_DURATION`/`EASE_OUT_EXPO` contract with `duration: 0` under `prefers-reduced-motion`; chevron indicator uses `motion-safe:` transitions.
+- **Pricing-rule alignment**: the fourth FAQ explicitly explains why no fixed price list is published (bespoke scopes → written itemized proposals), mirroring the AGENTS.md §5.5 CMS pricing rule.
+- **Surface rhythm finalized**: forest hero → ivory credibility → muted services → ivory industries → forest case study → ivory approach → muted team → ivory FAQ → **forest CTA** → charcoal footer.
+- **Contact channel duplication**: `ConsultationCta` mirrors the Footer's demo contact constants with a comment pinning both to Phase 6/7 `site_settings` (same sync-comment pattern as the service slugs).
+- **CTA variant overrides**: all three banner links styled via `buttonVariants()` (verified `cn` is the shadcn clsx+tailwind-merge package, so class overrides resolve correctly — consistent with Task 3.1/3.3 precedent).
+
+### 11.3 Verification Results (2026-09-27)
+
+| Command                | Result                                       |
+| :--------------------- | :------------------------------------------- |
+| `npm run typecheck`    | ✅ PASSED (0 errors)                         |
+| `npm run lint`         | ✅ PASSED (0 errors, 0 warnings)             |
+| `npm run test`         | ✅ PASSED (56/56 — 13 node + 43 UI)          |
+| `npm run build`        | ✅ PASSED (17/17 routes compiled, Turbopack) |
+| `npm run format:check` | ✅ PASSED (all files)                        |
+
+### 11.4 Next Task
+
+Awaiting Integravity's review of Phase 3 completion. Next assigned work per `docs/TASKS.md`: **Phase 4 (Service Detail Pages)**.

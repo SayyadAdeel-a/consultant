@@ -10,3 +10,8 @@ export { HeroSection } from "./HeroSection";
 export { CredibilitySection } from "./CredibilitySection";
 export { ServicesGrid } from "./ServicesGrid";
 export { IndustriesSection } from "./IndustriesSection";
+export { CaseStudySpotlight } from "./CaseStudySpotlight";
+export { ApproachSection } from "./ApproachSection";
+export { TeamSection } from "./TeamSection";
+export { FaqSection } from "./FaqSection";
+export { ConsultationCta } from "./ConsultationCta";
