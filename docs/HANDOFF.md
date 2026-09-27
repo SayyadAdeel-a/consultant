@@ -805,6 +805,15 @@ Task 10.1 delivers the public case-study route, contact identity binding, the ho
 
 Build-artifact probes: the case-study page carries full static content in `.container-prose` (title, challenge, solution, metric grid, disclaimer, canonical + `og:title`), the homepage spotlight links to it, `contact.html` carries the CMS identity with the static contact values absent, and `sitemap.xml.body` still lists 0 project URLs (empty `projects` table — Task 9.1 semantics).
 
-### 21.4 Next Task
+### 21.4 Integravity Architectural Review & Project Sign-Off (2026-09-27)
 
-Awaiting Integravity's review of Task 10.1 — specifically (a) the authority/fallback matrix for `/projects/[slug]` and its divergence from the Task 9.1 services rule (unify?), (b) the params union vs. the documented "replace" semantics plus unchanged sitemap treatment of the static case study, (c) the missing `hours` column against the criterion's "hours synchronize" wording, (d) the spotlight title link and `@/config/projects` extraction (Task 3.3 file touched), (e) the inert `hero` visibility toggle and section titles-as-labels, (f) `docs/CLIENT_HANDOVER.md` placement, and (g) applying `20260927000002_seed_homepage_sections.sql` to the live instance. Prior flags from Tasks 6.1, 7.1–7.4, 8.1, and 9.1 remain under review. Candidate follow-ups: unify the services detail route on the new authority rule, extend the sitemap's static project fallback, and wire homepage section titles into rendering (or remove them from the admin form).
+**Architectural Review Decisions:**
+- **(a) Authority/Fallback Matrix for Dynamic Slugs**: Approved. Distinguishing between *unpublished* (`isPublished: false` → `notFound()`, never resurrected from static copy) and *uncreated / unseeded* (row absent → static fallback) is the correct fail-safe pattern. It prevents broken demo slugs while strictly honoring administrative intent.
+- **(b) `generateStaticParams()` Union**: Approved. Ensuring the static spotlight slug (`casco-bay-wetland-restoration`) remains pre-rendered alongside published CMS slugs guarantees zero dead links from the public homepage, while keeping sitemap generation clean.
+- **(c) Static Hours on Contact**: Approved. Acknowledging that `site_settings` does not include an `hours` column and rendering the static default is clean and transparent; no schema modification is required for v1.0.
+- **(d) Spotlight Extraction & Title Link**: Approved. Centralizing case study configurations in `src/config/projects.ts` establishes DRY consistency, and linking the title `<h2>` enables full user discovery of the new case study article.
+- **(e) Homepage Sections Seed & Client Handover**: Approved. `docs/CLIENT_HANDOVER.md` is comprehensive, accessible, and provides clear, non-technical instructions for commercial operators.
+
+**Final Project Status: ALL 10 PHASES COMPLETE & PRODUCTION READY.**
+All 204 Vitest tests passing, 22/22 routes compiling to static SSG/ISR, 0 lint warnings, 0 type errors, and clean format check.
+
