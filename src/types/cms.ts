@@ -231,3 +231,54 @@ export type ProjectRecord = Pick<
  * "Associated service" column and editor selector.
  */
 export type ServiceOption = Pick<ServiceItem, "id" | "title" | "is_published">;
+
+/**
+ * Editable columns surfaced in the admin settings form
+ * (docs/TASKS.md Task 7.4). `logo_url` is not part of the spec'd form
+ * and is intentionally not fetched.
+ */
+export type SiteSettingsRecord = Pick<
+  SiteSettings,
+  | "id"
+  | "company_name"
+  | "tagline"
+  | "description"
+  | "contact_email"
+  | "contact_phone"
+  | "office_address"
+  | "social_links"
+  | "cta_settings"
+>;
+
+/**
+ * Editable columns surfaced in the admin content manager
+ * (docs/TASKS.md Task 7.4). The `content` JSONB block is edited
+ * elsewhere and intentionally not fetched here.
+ */
+export type HomepageSectionRecord = Pick<
+  HomepageSection,
+  "id" | "section_key" | "title" | "subtitle" | "is_visible" | "display_order"
+>;
+
+/**
+ * Columns surfaced in the admin media library (docs/TASKS.md Task 7.4).
+ * Dimensions and uploader are not displayed and are not fetched.
+ */
+export type MediaAssetRecord = Pick<
+  MediaAssetItem,
+  | "id"
+  | "filename"
+  | "file_path"
+  | "storage_bucket"
+  | "mime_type"
+  | "file_size"
+  | "alt_text"
+  | "caption"
+  | "created_at"
+>;
+
+/**
+ * Media row plus the storage public URL — `media_assets` stores no URL
+ * column; the page constructs it via `storage.getPublicUrl(file_path)`.
+ */
+export type MediaAssetView = MediaAssetRecord & { public_url: string };

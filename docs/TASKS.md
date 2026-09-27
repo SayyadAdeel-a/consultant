@@ -300,3 +300,46 @@ _Note: Integravity's Task 7.1 spec re-scoped this task to the dashboard + naviga
   - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (124/124), `npm run build` (21/21).
 
 **Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §17 for implementation details and verification results.
+
+### Task 7.4: Media Library, Homepage Content & Site Settings
+
+- **Assignee**: OpenCode
+- **Status**: **COMPLETE (verified 2026-09-27)**
+- **Files**:
+  - `src/app/admin/settings/page.tsx` (rewritten — gated list page, singleton `site_settings` read)
+  - `src/app/admin/content/page.tsx` (rewritten — gated list page, ordered by `display_order ASC`)
+  - `src/app/admin/media/page.tsx` (rewritten — gated list page, ordered by `created_at DESC`, public URLs via `storage.getPublicUrl`)
+  - `src/app/actions/settings.ts` (new — `updateSiteSettings` Server Action)
+  - `src/app/actions/content.ts` (new — `toggleSectionVisibility` + `updateHomepageSection` Server Actions)
+  - `src/app/actions/media.ts` (new — `uploadMediaAsset` + `deleteMediaAsset` Server Actions)
+  - `src/lib/validations/settings.ts` (new — `siteSettingsSchema`)
+  - `src/lib/validations/content.ts` (new — `sectionSchema`)
+  - `src/lib/validations/media.ts` (new — `mediaUploadSchema` + `mediaDeleteSchema` + `MEDIA_ACCEPT` / `MAX_MEDIA_UPLOAD_BYTES`)
+  - `src/lib/validations/cms.ts` (extended — shared `formDataToObject()` helper, consolidating the Task 7.3 per-module copies)
+  - `src/app/actions/services.ts` / `src/app/actions/projects.ts` (refactored onto the shared `formDataToObject` — behavior unchanged)
+  - `src/components/admin/SettingsForm.tsx` (new — 12-field settings editor)
+  - `src/components/admin/ContentSectionsTable.tsx` (new — manager table with optimistic visibility toggle)
+  - `src/components/admin/SectionEditorDrawer.tsx` (new — title/subtitle/display-order editor)
+  - `src/components/admin/MediaGrid.tsx` (new — asset cards with copy-URL + quick delete)
+  - `src/components/admin/MediaUploadDrawer.tsx` (new — file/alt/caption upload dialog)
+  - `src/components/admin/media-format.ts` (new — `formatFileSize` KB/MB helper)
+  - `src/components/admin/PublishPill.tsx` (extended — optional `activeLabel`/`inactiveLabel`, defaults unchanged)
+  - `src/components/admin/index.ts` (barrel exports `SettingsForm`, `ContentSectionsTable`, `MediaGrid`)
+  - `src/components/forms/FormField.tsx` (extended — optional `hint` prop, backward compatible)
+  - `src/types/cms.ts` (`SiteSettingsRecord`, `HomepageSectionRecord`, `MediaAssetRecord`, `MediaAssetView` picks)
+  - `supabase/migrations/20260927000001_media_storage.sql` (new — `media` bucket + storage `is_admin()` RLS policies)
+  - `tests/ui/admin-settings.test.tsx` (9 tests), `tests/ui/admin-content.test.tsx` (7 tests), `tests/ui/admin-media.test.tsx` (11 tests)
+- **Criteria**:
+  - [x] `/admin/settings` calls `await requireAdmin()`; reads the singleton `public.site_settings` row; renders `SettingsForm` with Company Name, Tagline, Description, Email, Phone, Office Address, LinkedIn URL, Twitter/X URL, and primary/secondary CTA labels + URLs.
+  - [x] `updateSiteSettings(formData | SiteSettingsInput)` — `"use server"` module, `await assertAdmin()` first, validated with `siteSettingsSchema`, upserts the singleton (`onConflict: singleton_guard`), revalidates `/admin/settings`, `/`, `/contact`, and `/admin`.
+  - [x] `/admin/content` calls `await requireAdmin()`; reads `public.homepage_sections` ordered by `display_order ASC`; `ContentSectionsTable` shows section key (hero, credibility, services, industries, projects, approach, team, faq, cta), Title, Subtitle, Visibility toggle (`is_visible`), and Display Order; `SectionEditorDrawer.tsx` updates title, subtitle, and display order.
+  - [x] `toggleSectionVisibility(id, isVisible)` + `updateHomepageSection(formData | SectionInput)` — both `await assertAdmin()` first, revalidate `/admin/content` and `/`.
+  - [x] `/admin/media` calls `await requireAdmin()`; reads `public.media_assets` ordered by `created_at DESC`; `MediaGrid` shows thumbnail preview, filename, formatted file size (KB/MB), MIME type badge, alt text, and a public-URL copy button.
+  - [x] `MediaUploadDrawer.tsx` — file input restricted to JPEG/PNG/WebP/SVG at max 5MB, required alt text, optional caption; live mode uploads to the Supabase Storage `media` bucket then writes the `public.media_assets` record; demo mode gracefully logs the asset metadata.
+  - [x] Quick delete action backed by `deleteMediaAsset(id, filePath)` — removes the storage object and the catalog row.
+  - [x] Both media actions `await assertAdmin()` first and revalidate `/admin/media` and `/admin`.
+  - [x] Fail-secure & demo mode: all three routes render `<AdminSetupPanel />` when `SupabaseNotConfiguredError` is caught at the gate.
+  - [x] Vitest suites: `tests/ui/admin-settings.test.tsx`, `tests/ui/admin-content.test.tsx`, `tests/ui/admin-media.test.tsx`.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (151/151), `npm run build` (21/21).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §18 for implementation details and verification results.

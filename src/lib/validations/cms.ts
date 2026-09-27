@@ -22,6 +22,47 @@ export const cmsIdSchema = z
   .min(1, "Invalid reference.")
   .max(64, "Invalid reference.");
 
+/** Form keys submitted as checkbox/hidden inputs and coerced to booleans. */
+const BOOLEAN_FORM_KEYS = [
+  "is_published",
+  "is_featured",
+  "is_visible",
+] as const;
+
+/**
+ * Converts submit `FormData` into a parseable object for the shared
+ * schemas. Checkbox-style keys (`is_published` / `is_featured` /
+ * `is_visible`) accept `"on"` / `"true"` (absent → `false`); keys listed
+ * in `arrayKeys` collect every entry via `getAll()` (newline-split,
+ * trimmed, blank lines dropped); everything else takes its single string
+ * value (`null` for non-string entries such as file uploads — callers
+ * with file fields should read them directly instead).
+ */
+export function formDataToObject(
+  formData: FormData,
+  arrayKeys: readonly string[] = [],
+): Record<string, unknown> {
+  const payload: Record<string, unknown> = {};
+  for (const key of new Set(formData.keys())) {
+    if (arrayKeys.includes(key)) {
+      payload[key] = formData
+        .getAll(key)
+        .flatMap((entry) =>
+          typeof entry === "string" ? entry.split("\n") : [],
+        )
+        .map((entry) => entry.trim())
+        .filter((entry) => entry !== "");
+    } else if ((BOOLEAN_FORM_KEYS as readonly string[]).includes(key)) {
+      const value = formData.get(key);
+      payload[key] = value === "true" || value === "on";
+    } else {
+      const value = formData.get(key);
+      payload[key] = typeof value === "string" ? value : null;
+    }
+  }
+  return payload;
+}
+
 /**
  * Maps Zod issues to a flat `{ field: firstErrorMessage }` record so
  * editor drawers can render inline errors keyed by form field.

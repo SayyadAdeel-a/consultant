@@ -1,15 +1,19 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Publication state pill shared by the services and case studies
- * managers (docs/TASKS.md Task 7.3): emerald for live rows, amber for
- * drafts still in the queue.
+ * State pill shared by the CMS managers: emerald for active/live rows,
+ * amber for inactive ones. Defaults to the services/case studies
+ * Published/Draft labels; the content manager passes Visible/Hidden.
  */
 export function PublishPill({
   isPublished,
+  activeLabel = "Published",
+  inactiveLabel = "Draft",
   className,
 }: {
   isPublished: boolean;
+  activeLabel?: string;
+  inactiveLabel?: string;
   className?: string;
 }) {
   return (
@@ -22,7 +26,7 @@ export function PublishPill({
         className,
       )}
     >
-      {isPublished ? "Published" : "Draft"}
+      {isPublished ? activeLabel : inactiveLabel}
     </span>
   );
 }

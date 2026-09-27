@@ -11,17 +11,25 @@ export function FormField({
   id,
   label,
   error,
+  hint,
   children,
 }: {
   id: string;
   label: string;
   error?: string;
+  /** Optional guidance rendered under the control (`<id>-hint`). */
+  hint?: string;
   children: ReactNode;
 }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
       {children}
+      {hint ? (
+        <p id={`${id}-hint`} className="text-muted-foreground text-xs">
+          {hint}
+        </p>
+      ) : null}
       {error ? (
         <p id={`${id}-error`} role="alert" className="text-destructive text-sm">
           {error}

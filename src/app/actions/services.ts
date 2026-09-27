@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import {
   cmsIdSchema,
   flattenCmsIssues,
+  formDataToObject,
   type CmsActionResult,
 } from "@/lib/validations/cms";
 import { serviceSchema, type ServiceInput } from "@/lib/validations/services";
@@ -37,26 +38,7 @@ function revalidateCmsPaths(): void {
 
 /** Maps a submit FormData into a parseable object (arrays + booleans). */
 function formDataToPayload(formData: FormData): Record<string, unknown> {
-  const payload: Record<string, unknown> = {};
-  for (const key of new Set(formData.keys())) {
-    const value = formData.get(key);
-    if (key === "deliverables" || key === "regulatory_frameworks") {
-      // Tag lists may arrive one-entry-per-line inside a single field;
-      // non-string entries (files) are never valid here and are dropped.
-      payload[key] = formData
-        .getAll(key)
-        .flatMap((entry) =>
-          typeof entry === "string" ? entry.split("\n") : [],
-        )
-        .map((entry) => entry.trim())
-        .filter((entry) => entry !== "");
-    } else if (key === "is_published" || key === "is_featured") {
-      payload[key] = value === "true" || value === "on";
-    } else {
-      payload[key] = typeof value === "string" ? value : null;
-    }
-  }
-  return payload;
+  return formDataToObject(formData, ["deliverables", "regulatory_frameworks"]);
 }
 
 function isUniqueViolation(error: unknown): boolean {

@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import {
   cmsIdSchema,
   flattenCmsIssues,
+  formDataToObject,
   type CmsActionResult,
 } from "@/lib/validations/cms";
 import { projectSchema, type ProjectInput } from "@/lib/validations/projects";
@@ -28,20 +29,6 @@ function revalidateCmsPaths(): void {
   revalidatePath("/services");
   revalidatePath("/admin/projects");
   revalidatePath("/");
-}
-
-/** Maps a submit FormData into a parseable object (booleans included). */
-function formDataToPayload(formData: FormData): Record<string, unknown> {
-  const payload: Record<string, unknown> = {};
-  for (const key of new Set(formData.keys())) {
-    const value = formData.get(key);
-    if (key === "is_published" || key === "is_featured") {
-      payload[key] = value === "true" || value === "on";
-    } else {
-      payload[key] = typeof value === "string" ? value : null;
-    }
-  }
-  return payload;
 }
 
 function isUniqueViolation(error: unknown): boolean {
@@ -112,7 +99,7 @@ export async function upsertProject(
   await assertAdmin();
 
   const raw: unknown =
-    input instanceof FormData ? formDataToPayload(input) : input;
+    input instanceof FormData ? formDataToObject(input) : input;
   const parsed = projectSchema.safeParse(raw);
   if (!parsed.success) {
     return {
