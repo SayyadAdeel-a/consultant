@@ -125,3 +125,26 @@ Validate all form submissions using **Zod** (`contactInquirySchema`) and include
 ### Consequences
 
 - **Positive**: Zero external tracking scripts, immediate spam elimination, strong TypeScript inference.
+
+---
+
+## ADR-007: Cookie-Free Public Supabase Client for Static Prerendering (SSG/ISR)
+
+### Context
+
+Next.js 16 App Router automatically marks any server component or route that calls `cookies()` as dynamic (`ƒ`), opting out of static generation. Using the standard `@supabase/ssr` server client for public reads (homepage, service catalog, service detail, sitemap) causes public pages to be rendered dynamically on every incoming request, harming TTFB, Core Web Vitals (LCP), and cacheability.
+
+### Decision
+
+Implement an isolated, cookie-free anonymous Supabase client (`src/lib/supabase/public.ts`) guarded with `server-only`. Public read queries run without session cookies, enabling public pages to be statically prerendered (`○` and `●`) with Incremental Static Regeneration (ISR via `revalidate = 300` / `3600`). Row Level Security (RLS) policies for the `anon` role remain fully enforced.
+
+### Alternatives Considered
+
+- _Use the cookie-based `@/lib/supabase/server` client everywhere_: Causes all public marketing pages to de-opt to dynamic server rendering (`ƒ`), degrading Core Web Vitals and increasing database connection load.
+- _Expose the anon client directly in Client Components_: Shifts data fetching to the client, introducing layout shift (CLS), waterfalls, and bundle size overhead.
+
+### Consequences
+
+- **Positive**: Public marketing pages and sitemap remain pre-compiled static HTML (sub-millisecond TTFB, zero CLS, CDN cacheable) while preserving live CMS data revalidation via ISR.
+- **Negative**: Requires maintaining two server-side client constructors (`public.ts` for anon reads, `server.ts` for authenticated session management).
+
