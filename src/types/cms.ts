@@ -162,3 +162,22 @@ export interface ContactInquiryItem {
   created_at: string;
   updated_at: string;
 }
+
+/**
+ * Columns surfaced in the admin inquiries console (docs/TASKS.md Task 7.2).
+ * Deliberately excludes `ip_hash` / `user_agent` — the management UI never
+ * needs them, so they are never fetched or rendered.
+ */
+export type InquiryRecord = Pick<
+  ContactInquiryItem,
+  | "id"
+  | "name"
+  | "email"
+  | "phone"
+  | "company"
+  | "inquiry_type"
+  | "message"
+  | "status"
+  | "admin_notes"
+  | "created_at"
+>;

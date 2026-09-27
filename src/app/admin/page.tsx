@@ -1,12 +1,13 @@
 import Link from "next/link";
+import { StatusPill } from "@/components/admin";
 import { requireAdmin } from "@/lib/auth/admin";
 import { buttonVariants } from "@/components/ui/button";
 import { SupabaseNotConfiguredError } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { createPageMetadata } from "@/lib/seo";
-import { cn } from "@/lib/utils";
 import { INQUIRY_TYPE_LABELS } from "@/lib/validations/contact";
-import { AdminConfigNotice } from "./config-notice";
+import type { InquiryStatus } from "@/lib/validations/inquiries";
+import { AdminSetupPanel } from "./setup-panel";
 
 export const metadata = createPageMetadata({
   title: "Admin Dashboard",
@@ -34,7 +35,7 @@ type RecentInquiry = {
   name: string;
   company: string | null;
   inquiry_type: string;
-  status: string;
+  status: InquiryStatus;
   created_at: string;
 };
 
@@ -49,13 +50,6 @@ type DashboardData = {
 };
 
 type SupabaseServer = Awaited<ReturnType<typeof createClient>>;
-
-const STATUS_STYLES: Record<string, string> = {
-  new: "bg-brand-sage/40 text-brand-forest",
-  reviewing: "bg-amber-100 text-amber-800",
-  contacted: "bg-emerald-100 text-emerald-800",
-  archived: "bg-muted text-muted-foreground",
-};
 
 async function fetchCount(
   supabase: SupabaseServer,
@@ -114,28 +108,9 @@ function formatDate(iso: string): string {
     month: "short",
     day: "numeric",
     year: "numeric",
+    // Pinned to UTC so server render and client hydration always agree.
+    timeZone: "UTC",
   });
-}
-
-function DashboardUnavailable() {
-  return (
-    <div className="mx-auto max-w-5xl">
-      <p className="text-eyebrow text-muted-foreground">Admin console</p>
-      <h1 className="font-heading mt-2 text-2xl font-semibold">Dashboard</h1>
-      <div className="border-border bg-card mt-6 rounded-xl border p-6">
-        <h2 className="font-heading text-lg font-semibold">
-          Configuration required
-        </h2>
-        <p className="text-muted-foreground mt-2 text-sm">
-          Live dashboard metrics require a configured Supabase project.
-          Administrative features fail secure until credentials are added.
-        </p>
-        <div className="mt-4">
-          <AdminConfigNotice />
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export default async function AdminDashboardPage() {
@@ -145,7 +120,7 @@ export default async function AdminDashboardPage() {
     if (error instanceof SupabaseNotConfiguredError) {
       // Demo mode: no credentials → no session can exist; show setup
       // guidance rather than crashing the admin shell.
-      return <DashboardUnavailable />;
+      return <AdminSetupPanel title="Dashboard" />;
     }
     // Unauthorized redirects and unexpected errors must propagate.
     throw error;
@@ -311,15 +286,7 @@ export default async function AdminDashboardPage() {
                     >
                       {formatDate(item.created_at)}
                     </time>
-                    <span
-                      className={cn(
-                        "rounded-full px-2 py-0.5 text-xs font-semibold",
-                        STATUS_STYLES[item.status] ?? STATUS_STYLES.new,
-                      )}
-                    >
-                      {item.status.charAt(0).toUpperCase() +
-                        item.status.slice(1)}
-                    </span>
+                    <StatusPill status={item.status} />
                   </div>
                 </li>
               ))}

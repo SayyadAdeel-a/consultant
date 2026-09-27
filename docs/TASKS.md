@@ -236,4 +236,32 @@ Replace the placeholder header and footer in `src/app/(public)/layout.tsx` with 
 
 **Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §15 for implementation details and verification results.
 
-_Note: Integravity's Task 7.1 spec re-scoped this task to the dashboard + navigation shell. The original Task 7.1 criteria ("Implement `/admin/content`, `/admin/services`, `/admin/projects`, and `/admin/inquiries`") remain pending as follow-up Phase 6 & 7 work._
+_Note: Integravity's Task 7.1 spec re-scoped this task to the dashboard + navigation shell. The original Task 7.1 criteria ("Implement `/admin/content`, `/admin/services`, `/admin/projects`, and `/admin/inquiries`") remain pending as follow-up Phase 6 & 7 work (the `/admin/inquiries` surface was delivered by Task 7.2)._
+
+### Task 7.2: Confidential Inquiries Management
+
+- **Assignee**: OpenCode
+- **Status**: **COMPLETE (verified 2026-09-27)**
+- **Files**:
+  - `src/app/admin/inquiries/page.tsx` (rewritten — gated list page)
+  - `src/app/actions/inquiries.ts` (new — `updateInquiryStatus` + `updateInquiryNotes` Server Actions)
+  - `src/components/admin/InquiriesTable.tsx` (new — pill filters with counts, type dropdown, semantic table)
+  - `src/components/admin/InquiryDetailDrawer.tsx` (new — accessible detail dialog with status + notes editors)
+  - `src/components/admin/StatusPill.tsx` (new — shared status pill)
+  - `src/components/admin/inquiry-format.ts` (new — shared received-date and type-label helpers)
+  - `src/components/admin/index.ts` (barrel exports `InquiriesTable`, `StatusPill`)
+  - `src/lib/validations/inquiries.ts` (new — `INQUIRY_STATUSES`, `inquiryStatusSchema`, `inquiryIdSchema`, `inquiryNotesSchema`)
+  - `src/app/admin/setup-panel.tsx` (new — shared fail-secure `AdminSetupPanel`)
+  - `src/app/admin/page.tsx` (refactored onto shared `StatusPill` + `AdminSetupPanel`; UTC-pinned dates)
+  - `src/types/cms.ts` (`InquiryRecord` column pick — excludes `ip_hash`/`user_agent`)
+  - `tests/ui/admin-inquiries.test.tsx` (14 tests)
+- **Criteria**:
+  - [x] `/admin/inquiries` calls `await requireAdmin()` — unauthorized visitors redirect to `/admin/login`; demo mode (`SupabaseNotConfiguredError`) renders the fail-secure `AdminSetupPanel`.
+  - [x] List reads use the authenticated server client (`createClient()` from `@/lib/supabase/server`) with a minimal column set under RLS — `public.inquiries` has no public SELECT path; only `public.is_admin()` reads.
+  - [x] `updateInquiryStatus(inquiryId, newStatus)` — `"use server"` module, `await assertAdmin()`, Zod-validated status, RLS-enforced write via the admin session, `revalidatePath("/admin/inquiries")` + `revalidatePath("/admin")`.
+  - [x] `updateInquiryNotes(inquiryId, notes)` — same gate; notes trimmed, 5000-char cap, empty clears to `NULL`; revalidates both paths.
+  - [x] `InquiriesTable` — status pill filters with count badges (All/New/Reviewing/Contacted/Archived), inquiry-type dropdown, semantic `<table>` with `<time dateTime>` dates, submitter + organization, type and status pills, per-row "View details" action, distinct first-use and no-match empty states.
+  - [x] `InquiryDetailDrawer` — `role="dialog"` + `aria-modal`, Escape/backdrop close, focus-on-open and Tab trap; `mailto:`/`tel:` links, full message with line breaks preserved, one-click status selector, internal notes editor with character counter.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (106/106), `npm run build` (21/21).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §16 for implementation details and verification results.
