@@ -393,7 +393,7 @@ _Note: Integravity's Task 7.1 spec re-scoped this task to the dashboard + naviga
 ### Task 10.1: Production Readiness Audit, Case Study Route, Contact Identity & Handover Guide
 
 - **Assignee**: OpenCode & Integravity
-- **Status**: **READY FOR EXECUTION**
+- **Status**: **COMPLETE (verified 2026-09-27)**
 - **Files**:
   - `src/app/(public)/contact/page.tsx` (sync with `resolvePublicIdentity()`)
   - `src/app/(public)/projects/[slug]/page.tsx` (new — dynamic public case study route with `.container-prose` layout, SEO metadata, and static fallback)
@@ -401,9 +401,10 @@ _Note: Integravity's Task 7.1 spec re-scoped this task to the dashboard + naviga
   - `docs/CLIENT_HANDOVER.md` (new — comprehensive operational guide for non-technical firm owners and administrators)
   - `tests/ui/case-studies-pages.test.tsx` (new — test suite verifying case study dynamic route, metadata, and fallback)
 - **Criteria**:
-  - [ ] Connect `src/app/(public)/contact/page.tsx` to read dynamic `resolvePublicIdentity()` so office address, email, phone, and hours automatically synchronize with `public.site_settings`.
-  - [ ] Implement `src/app/(public)/projects/[slug]/page.tsx` as a Server Component utilizing `.container-prose` (AGENTS.md §4.4) for case studies, with `generateStaticParams()`, `generateMetadata()`, challenge/solution/outcome presentation, and fail-safe fallback so sitemap project URLs resolve reliably.
-  - [ ] Create `supabase/migrations/20260927000002_seed_homepage_sections.sql` with default seed records for all 9 homepage sections (`hero`, `credibility`, `services`, `industries`, `projects`, `approach`, `team`, `faq`, `cta`) so section visibility toggles in `/admin/content` are immediately operational on fresh deployments.
-  - [ ] Produce `docs/CLIENT_HANDOVER.md` providing clear, step-by-step instructions for non-technical business owners covering: initial setup, admin account creation, inquiry intake, editing branding & settings, managing services and case studies, uploading assets, and production deployment on Vercel + Supabase.
-  - [ ] Run full production verification across all 5 standard commands: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test`, and `npm run build`.
+  - [x] Connect `src/app/(public)/contact/page.tsx` to read dynamic `resolvePublicIdentity()` so office address, email, phone, and hours automatically synchronize with `public.site_settings`.
+  - [x] Implement `src/app/(public)/projects/[slug]/page.tsx` as a Server Component utilizing `.container-prose` (AGENTS.md §4.4) for case studies, with `generateStaticParams()`, `generateMetadata()`, challenge/solution/outcome presentation, and fail-safe fallback so sitemap project URLs resolve reliably.
+  - [x] Create `supabase/migrations/20260927000002_seed_homepage_sections.sql` with default seed records for all 9 homepage sections (`hero`, `credibility`, `services`, `industries`, `projects`, `approach`, `team`, `faq`, `cta`) so section visibility toggles in `/admin/content` are immediately operational on fresh deployments.
+  - [x] Produce `docs/CLIENT_HANDOVER.md` providing clear, step-by-step instructions for non-technical business owners covering: initial setup, admin account creation, inquiry intake, editing branding & settings, managing services and case studies, uploading assets, and production deployment on Vercel + Supabase.
+  - [x] Run full production verification across all 5 standard commands: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test`, and `npm run build`.
 
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §21 for implementation details and verification results.

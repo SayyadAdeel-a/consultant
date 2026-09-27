@@ -336,6 +336,29 @@ describe("Homepage section visibility & identity binding", () => {
       screen.getByRole("heading", { name: "Questions, answered" }),
     ).toBeInTheDocument();
   });
+
+  it("seeds all nine section keys so admin visibility toggles work", () => {
+    // Task 10.1 seed migration: every homepage key must exist exactly
+    // once, visible by default, and idempotently (ON CONFLICT), so a
+    // fresh deployment's /admin/content toggles are immediately active.
+    const sql = readFileSync(
+      join(
+        process.cwd(),
+        "supabase",
+        "migrations",
+        "20260927000002_seed_homepage_sections.sql",
+      ),
+      "utf8",
+    );
+
+    for (const key of allSections) {
+      expect
+        .soft(sql, `seed missing section_key '${key}'`)
+        .toContain(`('${key}',`);
+    }
+    expect(sql).toContain("ON CONFLICT (section_key) DO NOTHING");
+    expect(sql.match(/, TRUE, \d+\)/g)).toHaveLength(allSections.length);
+  });
 });
 
 describe("Core Web Vitals & image optimization guards", () => {

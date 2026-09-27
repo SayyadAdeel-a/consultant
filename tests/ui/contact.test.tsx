@@ -4,16 +4,24 @@ import userEvent, { type UserEvent } from "@testing-library/user-event";
 import { ContactForm } from "@/components/forms";
 import ContactPage from "@/app/(public)/contact/page";
 import { submitInquiry, type ContactFormState } from "@/app/actions/contact";
+import { SupabaseNotConfiguredError } from "@/lib/env";
+import { createPublicClient } from "@/lib/supabase/public";
 import { useSearchParams } from "next/navigation";
 
 /**
- * Contact form tests (docs/TASKS.md Task 5.1).
+ * Contact form tests (docs/TASKS.md Task 5.1) plus the office-identity
+ * binding added in Task 10.1.
  *
  * The Server Action module is mocked so submissions resolve
  * deterministically without a server; `next/navigation` is mocked so
  * `useSearchParams` can simulate `?service=` pre-selection under jsdom.
  * Real component behavior (validation, honeypot, pending state, success
  * confirmation) is exercised through the actual form.
+ *
+ * `@/lib/supabase/public` is mocked so the async contact page reads
+ * deterministically: the default throws `SupabaseNotConfiguredError`
+ * (static identity), and one test configures the fake `site_settings`
+ * row to prove the CMS binding.
  */
 vi.mock("@/app/actions/contact", () => ({
   submitInquiry: vi.fn(),
@@ -21,6 +29,10 @@ vi.mock("@/app/actions/contact", () => ({
 
 vi.mock("next/navigation", () => ({
   useSearchParams: vi.fn(() => new URLSearchParams()),
+}));
+
+vi.mock("@/lib/supabase/public", () => ({
+  createPublicClient: vi.fn(),
 }));
 
 /** Builds a value matching Next's readonly `ReadonlyURLSearchParams`. */
@@ -40,7 +52,67 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(useSearchParams).mockReturnValue(searchParams());
   vi.mocked(submitInquiry).mockResolvedValue(SUCCESS_STATE);
+  // Default: Supabase unavailable → the page renders the static identity.
+  vi.mocked(createPublicClient).mockImplementation(() => {
+    throw new SupabaseNotConfiguredError("test");
+  });
 });
+
+type FakeTable = { rows?: unknown[]; error?: { message: string } };
+
+/**
+ * Chainable fake covering the chain `getSiteSettings()` uses:
+ * `from().select().eq().limit()`, awaited as a thenable resolving
+ * `{ data, error }`. `.eq()` filters are applied to raw columns.
+ */
+function createSupabaseFake(tables: Record<string, FakeTable>) {
+  const from = vi.fn((table: string) => {
+    const result: FakeTable = tables[table] ?? { rows: [] };
+    const filters: [string, unknown][] = [];
+    const builder = {
+      select: vi.fn(() => builder),
+      eq: vi.fn((column: string, value: unknown) => {
+        filters.push([column, value]);
+        return builder;
+      }),
+      order: vi.fn(() => builder),
+      limit: vi.fn(() => builder),
+      then: (
+        onFulfilled?: (value: unknown) => unknown,
+        onRejected?: (reason: unknown) => unknown,
+      ) =>
+        Promise.resolve(
+          result.error
+            ? { data: null, error: result.error }
+            : {
+                data: (result.rows ?? []).filter((row) =>
+                  filters.every(
+                    ([column, value]) =>
+                      (row as Record<string, unknown>)[column] === value,
+                  ),
+                ),
+                error: null,
+              },
+        ).then(onFulfilled, onRejected),
+    };
+    return builder;
+  });
+  return { from };
+}
+
+/** CMS `site_settings` row driving the identity test. */
+const CMS_SETTINGS = {
+  id: "settings-1",
+  singleton_guard: true,
+  company_name: "Marsh & Tide Environmental",
+  tagline: "Science that survives review",
+  description: "Full-service environmental practice for regulated sites.",
+  contact_email: "hello@marshintide.example",
+  contact_phone: "+1 (207) 555-0999",
+  office_address: "9 Tide Court\nPortland, ME 04101",
+  social_links: null,
+  cta_settings: null,
+};
 
 async function fillValidForm(user: UserEvent) {
   await user.type(screen.getByLabelText("Full name"), "Jordan Mercer");
@@ -209,8 +281,8 @@ describe("ContactForm", () => {
 });
 
 describe("Contact page", () => {
-  it("renders the editorial two-column layout with office details and timeline", () => {
-    render(<ContactPage />);
+  it("renders the editorial two-column layout with office details and timeline", async () => {
+    render(await ContactPage());
 
     expect(
       screen.getByRole("heading", {
@@ -219,7 +291,7 @@ describe("Contact page", () => {
       }),
     ).toBeInTheDocument();
 
-    // Left column — office details mirrored from the footer.
+    // Left column — office details resolved from the static identity.
     expect(screen.getByRole("heading", { name: "Office" })).toBeInTheDocument();
     expect(
       screen.getByText("14 Marshview Lane, Suite 300"),
@@ -238,6 +310,32 @@ describe("Contact page", () => {
     expect(screen.getByLabelText("Full name")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /send consultation request/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("synchronizes office details with the site_settings row", async () => {
+    vi.mocked(createPublicClient).mockImplementation(
+      () =>
+        createSupabaseFake({
+          site_settings: { rows: [CMS_SETTINGS] },
+        }) as never,
+    );
+
+    render(await ContactPage());
+
+    // Address, email, and phone all come from the CMS row.
+    expect(screen.getByText("9 Tide Court")).toBeInTheDocument();
+    expect(screen.getByText("Portland, ME 04101")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "hello@marshintide.example" }),
+    ).toHaveAttribute("href", "mailto:hello@marshintide.example");
+    expect(
+      screen.getByRole("link", { name: "+1 (207) 555-0999" }),
+    ).toHaveAttribute("href", "tel:+12075550999");
+
+    // Hours have no `site_settings` column and keep the static default.
+    expect(
+      screen.getByText("Monday – Friday, 8:00 AM – 5:00 PM ET"),
     ).toBeInTheDocument();
   });
 });

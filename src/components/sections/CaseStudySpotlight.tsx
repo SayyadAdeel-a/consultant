@@ -1,28 +1,17 @@
 import Link from "next/link";
 import { FadeIn } from "@/components/animations";
 import { buttonVariants } from "@/components/ui/button";
+import { featuredCaseStudy } from "@/config/projects";
 
 const disclaimer =
   "All illustrative statistics, certifications, and case studies shown are demonstrations.";
 
 /** Client metadata for the featured (illustrative) project. */
 const projectMeta = [
-  { term: "Client", value: "Casco Bay Estuary Partnership" },
-  { term: "Location", value: "Casco Bay, Maine" },
-  { term: "Scope", value: "Delineation, design & permitting" },
-  { term: "Year", value: "2024" },
-];
-
-const challenge =
-  "Decades of tidal restriction and shoreline erosion had fragmented the marsh into open-water pans, weakening nursery habitat for Casco Bay shellfish and pushing the parcel beyond its storm-surge thresholds.";
-
-const solution =
-  "We paired bathymetric LiDAR interpretation with fine-scale vegetation and soils surveying to re-establish historic tidal hydrology, then sequenced a joint Army Corps §404 and Maine DEP §401 authorization strategy around in-water work windows.";
-
-const results = [
-  { value: "42", label: "Acres restored" },
-  { value: "100%", label: "Agency concurrence on first submittal" },
-  { value: "11 months", label: "Permit timeline" },
+  { term: "Client", value: featuredCaseStudy.client },
+  { term: "Location", value: featuredCaseStudy.location },
+  { term: "Scope", value: featuredCaseStudy.scope },
+  { term: "Year", value: featuredCaseStudy.year },
 ];
 
 /** Supplementary site plate shown in the split-screen media column. */
@@ -58,7 +47,12 @@ export function CaseStudySpotlight() {
               id="case-study-heading"
               className="text-display-lg mt-3 text-balance"
             >
-              Casco Bay coastal wetland restoration
+              <Link
+                href={`/projects/${featuredCaseStudy.slug}`}
+                className="hover:text-brand-sage transition-colors"
+              >
+                {featuredCaseStudy.title}
+              </Link>
             </h2>
           </FadeIn>
 
@@ -77,18 +71,28 @@ export function CaseStudySpotlight() {
                 <h3 className="font-heading text-xl font-semibold">
                   The ecological challenge
                 </h3>
-                <p className="text-brand-sage mt-2 leading-relaxed">
-                  {challenge}
-                </p>
+                {featuredCaseStudy.challenge.map((paragraph) => (
+                  <p
+                    key={paragraph}
+                    className="text-brand-sage mt-2 leading-relaxed"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
               </div>
 
               <div>
                 <h3 className="font-heading text-xl font-semibold">
                   The technical solution
                 </h3>
-                <p className="text-brand-sage mt-2 leading-relaxed">
-                  {solution}
-                </p>
+                {featuredCaseStudy.solution.map((paragraph) => (
+                  <p
+                    key={paragraph}
+                    className="text-brand-sage mt-2 leading-relaxed"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
               </div>
 
               <div>
@@ -96,7 +100,7 @@ export function CaseStudySpotlight() {
                   The results
                 </h3>
                 <ul className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-3">
-                  {results.map((result) => (
+                  {featuredCaseStudy.metrics.map((result) => (
                     <li
                       key={result.label}
                       className="border-brand-sage/40 border-t pt-4"

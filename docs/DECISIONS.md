@@ -147,4 +147,3 @@ Implement an isolated, cookie-free anonymous Supabase client (`src/lib/supabase/
 
 - **Positive**: Public marketing pages and sitemap remain pre-compiled static HTML (sub-millisecond TTFB, zero CLS, CDN cacheable) while preserving live CMS data revalidation via ISR.
 - **Negative**: Requires maintaining two server-side client constructors (`public.ts` for anon reads, `server.ts` for authenticated session management).
-

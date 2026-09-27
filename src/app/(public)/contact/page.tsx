@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { ContactForm } from "@/components/forms";
+import { resolvePublicIdentity, STATIC_CONTACT } from "@/lib/data/identity";
+import { getSiteSettings } from "@/lib/data/public";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
@@ -10,18 +12,12 @@ export const metadata = createPageMetadata({
 });
 
 /**
- * Office details mirror the constants in `src/components/layout/Footer.tsx`
- * until `/admin/settings` drives both from the `site_settings` table
- * (Phase 6-7 CMS). Keep the two copies in sync until then.
+ * Office details resolve from the CMS `site_settings` row through the
+ * shared identity view-model (Task 10.1), so the address, email, and
+ * phone stay in lockstep with `/admin/settings`, the site header, and
+ * the footer. Opening hours have no `site_settings` column and keep the
+ * static default from `STATIC_CONTACT`.
  */
-const office = {
-  addressLines: ["14 Marshview Lane, Suite 300", "Portland, Maine 04101"],
-  email: "inquiries@integravity.example",
-  phone: "(207) 555-0148",
-  phoneHref: "tel:+12075550148",
-  hours: "Monday – Friday, 8:00 AM – 5:00 PM ET",
-};
-
 const expectSteps = [
   {
     title: "Submit",
@@ -38,13 +34,29 @@ const expectSteps = [
 ];
 
 /**
- * Contact page (docs/TASKS.md Task 5.1). Editorial two-column layout:
- * office details and a "What to expect" timeline on the left, the client
- * `<ContactForm />` (server action + honeypot intake) on the right inside
- * a `Suspense` boundary — required because the form reads `useSearchParams`
- * for `?service=` pre-selection during static prerendering.
+ * Contact page (docs/TASKS.md Task 5.1, identity-bound in Task 10.1).
+ * Editorial two-column layout: office details and a "What to expect"
+ * timeline on the left, the client `<ContactForm />` (server action +
+ * honeypot intake) on the right inside a `Suspense` boundary — required
+ * because the form reads `useSearchParams` for `?service=` pre-selection
+ * during static prerendering.
+ *
+ * Office details read the CMS `site_settings` row through
+ * `resolvePublicIdentity()`, so they stay in lockstep with the header,
+ * footer, and `/admin/settings`; demo mode falls back to the static
+ * defaults byte-identical to the previous hard-coded copy.
  */
-export default function ContactPage() {
+export default async function ContactPage() {
+  const settingsRead = await getSiteSettings();
+  const identity = resolvePublicIdentity(settingsRead.data);
+  const office = {
+    addressLines: identity.addressLines,
+    email: identity.email,
+    phone: identity.phone,
+    phoneHref: identity.phoneHref,
+    hours: STATIC_CONTACT.hours,
+  };
+
   return (
     <section className="py-16 md:py-20">
       <div className="container-editorial">

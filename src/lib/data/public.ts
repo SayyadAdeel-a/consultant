@@ -1,4 +1,5 @@
 import "server-only";
+import { caseStudies, type CaseStudyDetail } from "@/config/projects";
 import { services, type ServiceDetail } from "@/config/services";
 import { SupabaseNotConfiguredError } from "@/lib/env";
 import { createPublicClient } from "@/lib/supabase/public";
@@ -38,6 +39,22 @@ export interface PublicService {
   metaDescription: string | null;
 }
 
+/** Normalized CMS project (case study) row for public hydration. */
+export interface PublicProject {
+  slug: string;
+  title: string;
+  summary: string;
+  challenge: string;
+  solution: string;
+  results: string;
+  clientType: string;
+  location: string;
+  completedYear: number;
+  isPublished: boolean;
+  metaTitle: string | null;
+  metaDescription: string | null;
+}
+
 /** Sitemap source row (published CMS slugs). */
 export interface CmsSitemapEntry {
   slug: string;
@@ -49,6 +66,9 @@ const SITE_SETTINGS_COLUMNS =
 
 const SERVICE_COLUMNS =
   "slug, title, short_description, full_content, deliverables, regulatory_frameworks, pricing_note, meta_title, meta_description";
+
+const PROJECT_COLUMNS =
+  "slug, title, client_type, location, summary, challenge, solution, results, completed_year, is_published, meta_title, meta_description";
 
 const SEO_ENTRY_COLUMNS = "slug, updated_at";
 
@@ -91,6 +111,23 @@ function toPublicService(row: Record<string, unknown>): PublicService {
     framework: asStringArray(row.regulatory_frameworks),
     deliverables: asStringArray(row.deliverables),
     pricingNote: asNullableString(row.pricing_note),
+    metaTitle: asNullableString(row.meta_title),
+    metaDescription: asNullableString(row.meta_description),
+  };
+}
+
+function toPublicProject(row: Record<string, unknown>): PublicProject {
+  return {
+    slug: String(row.slug ?? ""),
+    title: String(row.title ?? ""),
+    summary: String(row.summary ?? ""),
+    challenge: String(row.challenge ?? ""),
+    solution: String(row.solution ?? ""),
+    results: String(row.results ?? ""),
+    clientType: String(row.client_type ?? ""),
+    location: String(row.location ?? ""),
+    completedYear: Number(row.completed_year ?? 0) || 0,
+    isPublished: row.is_published === true,
     metaTitle: asNullableString(row.meta_title),
     metaDescription: asNullableString(row.meta_description),
   };
@@ -179,6 +216,50 @@ export function getPublishedService(
   });
 }
 
+/**
+ * Published case-study rows in catalog order. Callers fall back to
+ * `caseStudyList` when the read is unavailable *or* returns nothing
+ * (fresh, unseeded database).
+ */
+export function getPublishedProjects(): Promise<PublicRead<PublicProject[]>> {
+  return runRead(async () => {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("projects")
+      .select(PROJECT_COLUMNS)
+      .eq("is_published", true)
+      .order("display_order");
+    if (error) throw new Error(error.message);
+    return (data ?? [])
+      .map((row) => toPublicProject(row as Record<string, unknown>))
+      .filter((project) => project.slug);
+  });
+}
+
+/**
+ * Single project row by slug in **any** publication state. The detail
+ * page needs the raw row (not the published-only view) to tell an
+ * unpublished case study apart from one that never existed:
+ * - row exists + `is_published` → render (CMS authority);
+ * - row exists + unpublished → `notFound()` (never resurrected);
+ * - no row → the caller may fall back to the static template demo.
+ */
+export function getProjectBySlug(
+  slug: string,
+): Promise<PublicRead<PublicProject | null>> {
+  return runRead(async () => {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("projects")
+      .select(PROJECT_COLUMNS)
+      .eq("slug", slug)
+      .limit(1);
+    if (error) throw new Error(error.message);
+    const row = data?.[0];
+    return row ? toPublicProject(row as Record<string, unknown>) : null;
+  });
+}
+
 async function getSitemapEntries(
   table: "services" | "projects",
 ): Promise<CmsSitemapEntry[]> {
@@ -249,6 +330,40 @@ export function hydrateServiceDetail(row: PublicService): ServiceDetail {
       paragraphs.length > 0 ? paragraphs : (fallback?.problemContext ?? []),
     milestones: fallback?.milestones ?? [],
     pricingNote: row.pricingNote,
+  };
+}
+
+/**
+ * Hydrates a CMS project row into the `CaseStudyDetail` shape the
+ * `/projects/[slug]` template renders. Per-field rules mirror the
+ * service catalog:
+ * - text fields come from the row; empty ones fall back to the static
+ *   copy for the same slug (a fresh install never renders empty
+ *   narrative sections for the featured case study);
+ * - `scope` has no CMS column and always comes from static config;
+ * - outcome prose and the static metric grid are mutually exclusive —
+ *   CMS-authored `results` never mix with the demo spotlight numbers.
+ */
+export function hydrateProjectDetail(row: PublicProject): CaseStudyDetail {
+  const fallback = caseStudies[row.slug];
+  const challenge = splitParagraphs(row.challenge);
+  const solution = splitParagraphs(row.solution);
+  const results = splitParagraphs(row.results);
+
+  return {
+    slug: row.slug,
+    title: row.title || fallback?.title || row.slug,
+    summary: row.summary || fallback?.summary || "",
+    client: row.clientType || fallback?.client || "",
+    location: row.location || fallback?.location || "",
+    scope: fallback?.scope ?? "",
+    year: row.completedYear
+      ? String(row.completedYear)
+      : (fallback?.year ?? ""),
+    challenge: challenge.length > 0 ? challenge : (fallback?.challenge ?? []),
+    solution: solution.length > 0 ? solution : (fallback?.solution ?? []),
+    results,
+    metrics: results.length > 0 ? [] : (fallback?.metrics ?? []),
   };
 }
 
