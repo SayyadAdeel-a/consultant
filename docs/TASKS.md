@@ -191,7 +191,27 @@ Replace the placeholder header and footer in `src/app/(public)/layout.tsx` with 
 ### Task 6.1: Supabase Auth & Session Verification
 
 - **Assignee**: OpenCode
-- **Criteria**: Wire `/admin/login` to Supabase email/password auth and verify cookies.
+- **Status**: **COMPLETE (verified 2026-09-27)**
+- **Files**:
+  - `src/lib/validations/auth.ts` (new — `adminLoginSchema`, `flattenAuthIssues()`)
+  - `src/app/actions/auth.ts` (new — `loginAdmin()`, `logoutAdmin()`)
+  - `src/components/forms/AdminLoginForm.tsx` (new)
+  - `src/components/forms/FormField.tsx` (new — shared label/control/error field extracted from `ContactForm`)
+  - `src/components/forms/ContactForm.tsx` (refactored to use shared `FormField`)
+  - `src/components/forms/index.ts` (barrel exports)
+  - `src/app/admin/login/page.tsx` (rewritten — mounts form, redirect for authenticated admins)
+  - `src/app/admin/layout.tsx` (session header: admin email + sign-out)
+  - `tests/ui/admin-auth.test.tsx` (13 tests)
+- **Criteria**:
+  - [x] `adminLoginSchema` (email format, non-empty password) shared by client and server so rules cannot drift.
+  - [x] `loginAdmin(prevState, formData)` server action: validates → `signInWithPassword` → fail-secure `admin_profiles` check (non-admins are signed out and denied) → `redirect("/admin")`.
+  - [x] `logoutAdmin()` signs out and redirects to `/admin/login`.
+  - [x] `AdminLoginForm` client component using `useActionState`, inline `role="alert"` errors, disabled pending state with spinner.
+  - [x] Login page mounts the form and immediately redirects already-authenticated admins to `/admin`.
+  - [x] Admin layout header displays the signed-in admin's email and a sign-out button hooked to `logoutAdmin`.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (85/85), `npm run build` (21/21).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §14 for implementation details and verification results.
 
 ### Task 7.1: CMS Dashboard & Content Management
 

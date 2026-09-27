@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import type { ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/forms/FormField";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -69,31 +69,6 @@ const EMPTY_VALUES: FormValues = {
   message: "",
   consent: false,
 };
-
-/** Label + control + inline error, wired together for screen readers. */
-function Field({
-  id,
-  label,
-  error,
-  children,
-}: {
-  id: string;
-  label: string;
-  error?: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
-      {children}
-      {error ? (
-        <p id={`${id}-error`} role="alert" className="text-destructive text-sm">
-          {error}
-        </p>
-      ) : null}
-    </div>
-  );
-}
 
 const inputClass = "h-10";
 
@@ -220,7 +195,7 @@ export function ContactForm() {
         </div>
       ) : null}
 
-      <Field id="contact-name" label="Full name" error={fieldErrors.name}>
+      <FormField id="contact-name" label="Full name" error={fieldErrors.name}>
         <Input
           id="contact-name"
           name="name"
@@ -233,9 +208,9 @@ export function ContactForm() {
           aria-describedby={fieldErrors.name ? "contact-name-error" : undefined}
           className={inputClass}
         />
-      </Field>
+      </FormField>
 
-      <Field id="contact-email" label="Email" error={fieldErrors.email}>
+      <FormField id="contact-email" label="Email" error={fieldErrors.email}>
         <Input
           id="contact-email"
           name="email"
@@ -250,9 +225,9 @@ export function ContactForm() {
           }
           className={inputClass}
         />
-      </Field>
+      </FormField>
 
-      <Field
+      <FormField
         id="contact-phone"
         label="Phone (optional)"
         error={fieldErrors.phone}
@@ -270,9 +245,9 @@ export function ContactForm() {
           }
           className={inputClass}
         />
-      </Field>
+      </FormField>
 
-      <Field
+      <FormField
         id="contact-organization"
         label="Company / organization"
         error={fieldErrors.organization}
@@ -290,9 +265,9 @@ export function ContactForm() {
           }
           className={inputClass}
         />
-      </Field>
+      </FormField>
 
-      <Field
+      <FormField
         id="contact-inquiryType"
         label="Inquiry type"
         error={fieldErrors.inquiryType}
@@ -317,9 +292,13 @@ export function ContactForm() {
             </option>
           ))}
         </select>
-      </Field>
+      </FormField>
 
-      <Field id="contact-message" label="Message" error={fieldErrors.message}>
+      <FormField
+        id="contact-message"
+        label="Message"
+        error={fieldErrors.message}
+      >
         <Textarea
           id="contact-message"
           name="message"
@@ -333,7 +312,7 @@ export function ContactForm() {
           }
           placeholder="Site location, permitting body, timeline…"
         />
-      </Field>
+      </FormField>
 
       <div className="space-y-2">
         <div className="flex items-start gap-2.5">

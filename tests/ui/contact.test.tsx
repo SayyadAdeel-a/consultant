@@ -139,11 +139,9 @@ describe("ContactForm", () => {
     expect(submitInquiry).not.toHaveBeenCalled();
   });
 
-  it(
-    "disables the submit button while pending and confirms success",
-    async () => {
-      const user = userEvent.setup({ delay: null });
-      let resolveAction!: (value: ContactFormState) => void;
+  it("disables the submit button while pending and confirms success", async () => {
+    const user = userEvent.setup({ delay: null });
+    let resolveAction!: (value: ContactFormState) => void;
     vi.mocked(submitInquiry).mockImplementation(
       () =>
         new Promise((resolve) => {
@@ -186,11 +184,9 @@ describe("ContactForm", () => {
     ).toBeNull();
   }, 10000);
 
-  it(
-    "surfaces server-returned field errors inline",
-    async () => {
-      const user = userEvent.setup({ delay: null });
-      vi.mocked(submitInquiry).mockResolvedValue({
+  it("surfaces server-returned field errors inline", async () => {
+    const user = userEvent.setup({ delay: null });
+    vi.mocked(submitInquiry).mockResolvedValue({
       status: "error",
       message: "Please correct the highlighted fields and try again.",
       fieldErrors: { email: "This email address is already registered." },

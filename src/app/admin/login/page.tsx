@@ -1,34 +1,35 @@
+import { redirect } from "next/navigation";
+import { AdminLoginForm } from "@/components/forms";
+import { getAdminUser } from "@/lib/auth/admin";
+import { SupabaseNotConfiguredError } from "@/lib/env";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
   title: "Login",
-  description: "Administrator sign-in.",
+  description: "Administrator sign-in for the IntegraVity admin console.",
   path: "/admin/login",
   index: false,
 });
 
 /**
- * Login scaffold. Supabase email/password sign-in, session establishment and
- * post-login redirect are implemented in Phase 6 (auth wiring). No client
- * component is mounted yet because sign-in requires configured credentials.
+ * Administrator sign-in (docs/TASKS.md Task 6.1).
+ *
+ * Already-authenticated admins skip the form and land on /admin. When
+ * Supabase is unconfigured (demo mode) the guard resolves to null and the
+ * form still renders — submitting then returns the fail-secure
+ * "not configured" error from the `loginAdmin` action.
  */
-export default function AdminLoginPage() {
+export default async function AdminLoginPage() {
+  const admin = await getAdminUser().catch((error: unknown) => {
+    if (error instanceof SupabaseNotConfiguredError) return null;
+    throw error;
+  });
+
+  if (admin) redirect("/admin");
+
   return (
-    <div className="grid min-h-[70vh] place-items-center">
-      <div className="border-border bg-card w-full max-w-sm rounded-xl border p-8 shadow-sm">
-        <h1 className="font-heading text-xl font-semibold">
-          Administrator sign-in
-        </h1>
-        <p className="text-muted-foreground mt-2 text-sm">
-          Authentication is implemented in Phase 6 (Supabase Auth). Public
-          registration is disabled by design; accounts are provisioned through a
-          controlled process (see docs/BACKEND_SECURITY.md).
-        </p>
-        <div className="bg-muted text-muted-foreground mt-6 rounded-lg p-4 text-xs">
-          This screen intentionally exposes no authentication mechanism until
-          Supabase credentials are configured. It fails secure.
-        </div>
-      </div>
+    <div className="grid min-h-[70vh] place-items-center px-4 py-10">
+      <AdminLoginForm />
     </div>
   );
 }

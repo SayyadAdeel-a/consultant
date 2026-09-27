@@ -411,3 +411,50 @@ Awaiting Integravity's review of Task 4.1. **Phase 4 has no remaining tasks** �
 ### 13.4 Next Task
 
 Awaiting Integravity's review of Task 5.1. **Phase 5 has no remaining tasks** — next assigned work per `docs/TASKS.md`: **Task 6.1: Supabase Auth & Session Verification** (Phase 6 & 7).
+
+---
+
+## 14. Task 6.1 Implementation Results (OpenCode)
+
+**Status: COMPLETE — all acceptance criteria met and verified (2026-09-27). Phase 6 & 7 kickoff: administrative sign-in, session establishment, and sign-out wiring.**
+
+### 14.1 Files Created / Modified
+
+| File                                      | Change     | Purpose                                                                                                                                                                                                                                                                                                                             |
+| :---------------------------------------- | :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/validations/auth.ts`             | Created    | `adminLoginSchema` (email format + non-empty password, password deliberately untrimmed) and `flattenAuthIssues()` — Zod issues → `{ field: firstMessage }` for inline errors, shared by form and action                                                                                                                             |
+| `src/app/actions/auth.ts`                 | Created    | `"use server"`: `loginAdmin(prevState, formData)` — schema validation → `signInWithPassword` → fail-secure `admin_profiles` check → `redirect("/admin")`; `logoutAdmin()` — best-effort `signOut()` → `redirect("/admin/login")`                                                                                                    |
+| `src/components/forms/AdminLoginForm.tsx` | Created    | Client form with `useActionState(loginAdmin, …)`: shared-schema client gate, merged server/client `fieldErrors` derived at render, `role="alert"` server message, pending → disabled button + `motion-safe:animate-spin` loader + `aria-busy`, security footnote                                                                    |
+| `src/components/forms/FormField.tsx`      | Created    | Shared `Label` + control + inline `role="alert"` error wiring (`htmlFor` + `<id>-error`), extracted from `ContactForm`'s private `Field` so admin and Phase 7 CMS forms reuse identical markup                                                                                                                                      |
+| `src/components/forms/ContactForm.tsx`    | Refactored | Local `Field` removed in favor of shared `FormField` — DOM output byte-identical; all 8 contact tests unchanged and green                                                                                                                                                                                                           |
+| `src/components/forms/index.ts`           | Updated    | Added `AdminLoginForm` and `FormField` exports                                                                                                                                                                                                                                                                                      |
+| `src/app/admin/login/page.tsx`            | Rewritten  | Async page: `getAdminUser()` → authenticated admins `redirect("/admin")`; otherwise renders `<AdminLoginForm />` centered in the editorial card shell; metadata kept `index: false`                                                                                                                                                 |
+| `src/app/admin/layout.tsx`                | Updated    | Async layout with session header: brand + admin email + sign-out (`<form action={logoutAdmin}>` with `buttonVariants` styling); brand block moved from sidebar into the header; sidebar nav and `AdminConfigNotice` retained; still intentionally does **not** call `requireAdmin()`                                                |
+| `tests/ui/admin-auth.test.tsx`            | Created    | 13 tests: form rendering, client-side validation blocking dispatch, server invalid-credentials feedback, pending/disabled state with recovery, `loginAdmin` success redirect, non-admin fail-secure, profile-lookup-error fail-secure, `logoutAdmin`, login-page redirect/render, layout email/sign-out/signed-out/unconfigured (3) |
+
+### 14.2 Design Decisions
+
+- **Fail-secure admin check inside the action**: after `signInWithPassword`, `loginAdmin` mirrors `hasAdminProfile()` from `src/lib/auth/admin.ts` (`.from("admin_profiles").select("user_id").eq("user_id", …).maybeSingle()`) using the **anon** client — the RLS `is_admin()` policy filters non-admins down to zero rows, so no service-role key is involved. Missing row **or** lookup error → `signOut()` + access-denied message (a valid password alone never grants `/admin`). The query is inlined rather than imported because `admin.ts` carries `import "server-only"`, which would break the jsdom test graph; a sync comment ties it to the canonical helper. _(Consistent with Task 5.1's least-privilege direction — flagged for Integravity review.)_
+- **`redirect()` outside `try/catch`**: Next throws a control-flow exception on redirect, which a catch-all would swallow. Every failure path therefore `return`s a state object; `redirect("/admin")` sits after the `try/catch` and is reached only on full success. `logoutAdmin()` always redirects (even on sign-out failure/unconfigured mode) so the admin can never get stuck.
+- **Graceful demo mode**: login page and layout call `getAdminUser().catch(…)` mapping `SupabaseNotConfiguredError` → `null` (the guard throws fail-secure before ever touching `cookies()`), so the shell and form render in unconfigured demo builds; submitting then returns the action's "not configured" error. `logoutAdmin` swallows only `SupabaseNotConfiguredError`.
+- **Admin routes are now dynamic (`ƒ`)**: the layout/session reads call `cookies()`, so `/admin`* flipped from static `○` to server-rendered `ƒ` in the build — expected and desirable for an authenticated area (login page included).
+- **Layout stays ungated**: per its original contract, the layout never calls `requireAdmin()` (that would loop `/admin/login` through itself); it only _displays_ session state. Each admin page keeps gating itself — enforced again for Phase 7 pages.
+- **Shared `FormField`**: three-plus forms arrive in Phase 7, so the label/control/error wiring was extracted once; `ContactForm` was refactored onto it (identical markup — regression suite green).
+- **Validation gate pattern** reused from `ContactForm`: invalid client input → `preventDefault()` + inline errors + focus first invalid field; valid → no `preventDefault`, letting React dispatch `action` in its own transition so `pending` stays accurate. Server `fieldErrors` merge with client ones at render (no `useEffect`).
+- **Password handling**: schema never trims passwords (spaces are legal credentials); `z.string().min(1).max(1024)`.
+- **Test graph mocks**: `@/lib/auth/admin` mocked (module has `import "server-only"`), `@/lib/supabase/server` mocked with a chainable fake (`from().select().eq().maybeSingle()`), and `next/navigation.redirect` mocked to throw a `NEXT_REDIRECT:<url>` marker — mirroring Next's control-flow throw so success paths assert as rejections. The real actions are imported (not module-mocked), so form tests exercise the real `loginAdmin`.
+- **`tests/ui/contact.test.tsx` reformat**: `format:check` caught line-break drift in that file (pre-existing, non-semantic); re-run through Prettier and the full suite re-verified green.
+
+### 14.3 Verification Results (2026-09-27)
+
+| Command                | Result                                                        |
+| :--------------------- | :------------------------------------------------------------ |
+| `npm run typecheck`    | ✅ PASSED (0 errors)                                          |
+| `npm run lint`         | ✅ PASSED (0 errors, 0 warnings)                              |
+| `npm run test`         | ✅ PASSED (85/85 — 13 node + 72 UI, incl. 13 new admin tests) |
+| `npm run build`        | ✅ PASSED (21/21 routes — `/admin`* now dynamic `ƒ`)          |
+| `npm run format:check` | ✅ PASSED (all files)                                         |
+
+### 14.4 Next Task
+
+Awaiting Integravity's review of Task 6.1 — specifically the anon-client fail-secure admin check (RLS-filtered, mirrored from `hasAdminProfile()`), the inlined profile query, and the static→dynamic shift of `/admin`* routes. Next assigned work per `docs/TASKS.md`: **Task 7.1: CMS Dashboard & Content Management** (Phase 6 & 7).
