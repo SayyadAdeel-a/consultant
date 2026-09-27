@@ -53,3 +53,19 @@ export const contactInquirySchema = z.object({
 });
 
 export type ContactInquiryInput = z.infer<typeof contactInquirySchema>;
+
+/**
+ * Maps Zod issues to a flat `{ fieldName: firstErrorMessage }` record for
+ * inline form errors. Shared by the client form and the server action so
+ * error keys always match input `name` attributes and can never drift.
+ */
+export function flattenContactIssues(
+  error: z.ZodError,
+): Record<string, string> {
+  const fieldErrors: Record<string, string> = {};
+  for (const issue of error.issues) {
+    const key = String(issue.path[0] ?? "form");
+    fieldErrors[key] ??= issue.message;
+  }
+  return fieldErrors;
+}

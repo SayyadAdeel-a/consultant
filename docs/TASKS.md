@@ -165,14 +165,24 @@ Replace the placeholder header and footer in `src/app/(public)/layout.tsx` with 
 ### Task 5.1: Interactive Consultation Request Form
 
 - **Assignee**: OpenCode
+- **Status**: **COMPLETE (verified 2026-09-27)**
 - **Files**:
   - `src/components/forms/ContactForm.tsx`
   - `src/app/(public)/contact/page.tsx`
   - `src/app/actions/contact.ts`
+  - `src/components/forms/index.ts` (barrel export)
+  - `src/lib/validations/contact.ts` (shared `flattenContactIssues()` helper)
+  - `tests/ui/contact.test.tsx` (8 tests)
 - **Criteria**:
-  - Client-side validation using `contactInquirySchema`.
-  - Invisible honeypot field (`companyWebsite`) blocking bots.
-  - Accessible error and success states.
+  - [x] Client-side validation using `contactInquirySchema`.
+  - [x] Invisible honeypot field (`companyWebsite`) blocking bots.
+  - [x] Accessible error and success states.
+  - [x] Server Action with Zod validation, RLS-enforced insert, and demo-mode graceful success.
+  - [x] `?service=` search-param pre-selection of `inquiryType`, pending/disabled submit, success confirmation.
+  - [x] Editorial two-column contact page with office details, "What to expect" timeline, and `<Suspense>`-wrapped form.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (72/72), `npm run build` (21/21).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §13 for implementation details and verification results. **Phase 5 complete.**
 
 ---
 

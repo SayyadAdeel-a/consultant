@@ -3,4 +3,4 @@
  * Contact form, inquiry status controls, CMS content forms.
  */
 
-export const formsComponentsPlaceholder = true;
+export { ContactForm } from "./ContactForm";

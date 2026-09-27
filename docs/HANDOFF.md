@@ -368,4 +368,46 @@ Awaiting Integravity's review of Phase 3 completion. Next assigned work per `doc
 
 ### 12.4 Next Task
 
-Awaiting Integravity's review of Task 4.1. **Phase 4 has no remaining tasks** — next assigned work per `docs/TASKS.md`: **Task 5.1: Interactive Consultation Request Form** (Phase 5).
+Awaiting Integravity's review of Task 4.1. **Phase 4 has no remaining tasks** — next assigned work per `docs/TASKS.md`: **Task 5.1: Interactive Consultation Request Form** (Phase 5) — completed in §13 below.
+
+---
+
+## 13. Task 5.1 Implementation Results (OpenCode)
+
+**Status: COMPLETE — all acceptance criteria met and verified (2026-09-27). Phase 5 (Contact Experience) complete.**
+
+### 13.1 Files Created / Modified
+
+| File                                   | Change    | Purpose                                                                                                                                                                                                                                                                                                                                          |
+| :------------------------------------- | :-------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/actions/contact.ts`           | Created   | `"use server"` intake action: honeypot gate → `contactInquirySchema` validation (field errors keyed by input `name`) → RLS-enforced insert into `public.inquiries`; demo-mode graceful success with server logging when Supabase is unconfigured                                                                                                 |
+| `src/components/forms/ContactForm.tsx` | Created   | Client form: 7 labeled fields (name, email, phone, organization, inquiryType select, message, consent) + hidden `companyWebsite` honeypot, `?service=` pre-selection via `resolveInquiryType()`, client-side schema validation with inline `role="alert"` errors, `useActionState` pending/disabled submit button, `role="status"` success panel |
+| `src/app/(public)/contact/page.tsx`    | Rewritten | Editorial two-column layout — left: office details (mirrored from Footer with sync comment) + numbered "What to expect" timeline; right: `<ContactForm />` in a `Suspense` boundary (required for `useSearchParams` static prerendering); updated metadata                                                                                       |
+| `src/components/forms/index.ts`        | Updated   | Replaced placeholder export with `export { ContactForm }`                                                                                                                                                                                                                                                                                        |
+| `src/lib/validations/contact.ts`       | Extended  | Added `flattenContactIssues()` — shared Zod-issues → `{ field: message }` mapper so client and server error keys can never drift (no behavior change to the schema)                                                                                                                                                                              |
+| `tests/ui/contact.test.tsx`            | Created   | 8 tests: field rendering/defaults, honeypot presence (name/tabindex/autocomplete/aria-hidden), `?service=` pre-selection + unknown-slug fallback, inline validation errors blocking the server call, pending/disabled button + FormData assertions + success confirmation, server-returned field errors, page two-column layout                  |
+
+### 13.2 Design Decisions
+
+- **Least-privilege storage path**: the action uses the **anon server client** (`@/lib/supabase/server`), so Postgres RLS is always enforced — the migration's public `INSERT ... WITH CHECK (TRUE)` policy on `inquiries` covers submission, and visitors still have zero `SELECT`. The service-role key stays out of the contact path entirely; `admin.ts`'s "contact intake" allowance remains available for future privileged maintenance but is not needed here. _(Flagged for Integravity review: this deviates from the looser reading of `admin.ts`'s allowed-uses comment.)_
+- **Honeypot returns fake success**: a filled `companyWebsite` is discarded silently _before_ schema parsing and DB access (per BACKEND_SECURITY §6.2), returning the normal success message so bots learn nothing; only a `console.warn` records the event.
+- **Demo mode**: `isSupabaseConfigured()` false (or `SupabaseNotConfiguredError` caught) → success response + `console.log` stating the inquiry was NOT stored — graceful template behavior without bypassing anything privileged.
+- **Validation gate pattern**: `onSubmit` runs the shared schema client-side; invalid → `preventDefault()` + inline errors + focus first invalid field. Valid → **no** `preventDefault`, letting React dispatch the form's `action` inside its own transition (initially a manual `formAction(formData)` call was used; React's "called outside of a transition" warning showed `pending` never updated — fixed to the canonical pattern).
+- **No effect-based error sync**: server-returned `fieldErrors` are _derived_ during render (`{ ...serverErrors, ...clientErrors }`) rather than copied in a `useEffect` — satisfies the `react-hooks/set-state-in-effect` rule; per-field edits still clear local errors immediately.
+- **`ReadonlyURLSearchParams`**: tests build values through a small `searchParams()` helper with a cast (Next's readonly type rejects plain `URLSearchParams` in `mockReturnValue`).
+- **Consent/company mapping**: schema field `organization` maps to the DB `company` column; consent checkbox submits `on` → `z.literal(true)` server-side.
+- **`?service=` mapping**: service slugs map to inquiry types (`environmental-permitting`→`permitting`, `environmental-assessments`→`assessment`, `environmental-planning`→`planning`, `wetland-delineation`→`wetland-delineation`); raw enum values accepted too; unknown → `general`. Wiring service-page CTAs to `/contact?service=…` was out of scope — recommendation for a follow-up task.
+
+### 13.3 Verification Results (2026-09-27)
+
+| Command                | Result                                                       |
+| :--------------------- | :----------------------------------------------------------- |
+| `npm run typecheck`    | ✅ PASSED (0 errors)                                         |
+| `npm run lint`         | ✅ PASSED (0 errors, 0 warnings)                             |
+| `npm run test`         | ✅ PASSED (72/72 — 13 node + 59 UI)                          |
+| `npm run build`        | ✅ PASSED (21/21 routes — `/contact` statically prerendered) |
+| `npm run format:check` | ✅ PASSED (all files)                                        |
+
+### 13.4 Next Task
+
+Awaiting Integravity's review of Task 5.1. **Phase 5 has no remaining tasks** — next assigned work per `docs/TASKS.md`: **Task 6.1: Supabase Auth & Session Verification** (Phase 6 & 7).
