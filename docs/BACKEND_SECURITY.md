@@ -118,8 +118,8 @@ All user submissions and administrative mutations are validated against strict Z
 
 ## 7. Media Upload & Storage Protection
 
-1. **Storage Buckets**: Media is stored in Supabase Storage (`media` bucket).
-2. **Size Limits**: Enforced at 10MB for photographic assets and 25MB for regulatory documents.
-3. **MIME-Type Restrictions**: Restricted to `image/jpeg`, `image/png`, `image/webp`, and `application/pdf`.
+1. **Storage Buckets**: Web imagery is stored in Supabase Storage (`media` bucket); future client documents use the `documents` bucket.
+2. **Size Limits**: Enforced at 5MB for web imagery assets in the media manager (`mediaUploadSchema`), and up to 25MB for regulatory documents.
+3. **MIME-Type Restrictions**: Web imagery uploads are strictly restricted to `image/jpeg`, `image/png`, `image/webp`, and `image/svg+xml` (with strict XML structure validation). Regulatory documents are restricted to `application/pdf`.
 4. **Storage RLS**:
    - `media` bucket: Public read allowed. Write, update, and delete restricted exclusively to users passing `public.is_admin()`.

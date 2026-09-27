@@ -343,3 +343,20 @@ _Note: Integravity's Task 7.1 spec re-scoped this task to the dashboard + naviga
   - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (151/151), `npm run build` (21/21).
 
 **Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §18 for implementation details and verification results.
+
+---
+
+## Phase 8: Security Verification & Audit Tasks
+
+### Task 8.1: Security Regression & Boundary Verification Suite
+
+- **Assignee**: OpenCode & Integravity
+- **Status**: PENDING
+- **Criteria**:
+  - [ ] Implement automated security audit test suite in `tests/unit/security-audit.test.ts`.
+  - [ ] Verify zero exposure of `SUPABASE_SERVICE_ROLE_KEY` in client components, bundles, or public exports.
+  - [ ] Verify that unauthenticated requests to all admin Server Actions (`updateInquiryStatus`, `updateInquiryNotes`, `toggleServicePublished`, `upsertService`, `toggleProjectPublished`, `toggleProjectFeatured`, `upsertProject`, `updateSiteSettings`, `toggleSectionVisibility`, `updateHomepageSection`, `uploadMediaAsset`, `deleteMediaAsset`) reject with unauthorized errors via `assertAdmin()`.
+  - [ ] Verify that anonymous client queries to `public.inquiries` return zero rows or throw permission errors (RLS enforcement).
+  - [ ] Verify anti-spam honeypot behavior: non-empty `companyWebsite` in `submitInquiry` silently returns fake success without writing to the database.
+  - [ ] Verify file upload validation in `mediaUploadSchema`: blocks non-image MIME types, malformed files, and files exceeding 5MB.
+  - [ ] Verify CMS pricing rule enforcement: empty or whitespace-only pricing notes are never rendered in the public DOM.
