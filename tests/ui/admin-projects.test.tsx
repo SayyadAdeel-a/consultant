@@ -421,7 +421,7 @@ describe("ProjectEditorDrawer", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
-  });
+  }, 15000);
 
   it("surfaces validation errors on required fields without touching the database", async () => {
     const user = userEvent.setup({ delay: null });

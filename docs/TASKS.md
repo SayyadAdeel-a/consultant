@@ -351,12 +351,19 @@ _Note: Integravity's Task 7.1 spec re-scoped this task to the dashboard + naviga
 ### Task 8.1: Security Regression & Boundary Verification Suite
 
 - **Assignee**: OpenCode & Integravity
-- **Status**: PENDING
+- **Status**: **COMPLETE (verified 2026-09-27)**
+- **Files**:
+  - `tests/unit/security-audit.test.ts` (new — 28 tests: secret-isolation scan, 12 unauthenticated action gates, static RLS enforcement, honeypot, upload boundary, pricing rule)
+  - `tests/mocks/server-only.ts` (new — empty stand-in for the Next.js-aliased `server-only` specifier, which is not a real dependency)
+  - `vitest.config.ts` (extended — `server-only` → stub alias so tests can import the genuine `src/lib/auth/admin.ts` gate)
 - **Criteria**:
-  - [ ] Implement automated security audit test suite in `tests/unit/security-audit.test.ts`.
-  - [ ] Verify zero exposure of `SUPABASE_SERVICE_ROLE_KEY` in client components, bundles, or public exports.
-  - [ ] Verify that unauthenticated requests to all admin Server Actions (`updateInquiryStatus`, `updateInquiryNotes`, `toggleServicePublished`, `upsertService`, `toggleProjectPublished`, `toggleProjectFeatured`, `upsertProject`, `updateSiteSettings`, `toggleSectionVisibility`, `updateHomepageSection`, `uploadMediaAsset`, `deleteMediaAsset`) reject with unauthorized errors via `assertAdmin()`.
-  - [ ] Verify that anonymous client queries to `public.inquiries` return zero rows or throw permission errors (RLS enforcement).
-  - [ ] Verify anti-spam honeypot behavior: non-empty `companyWebsite` in `submitInquiry` silently returns fake success without writing to the database.
-  - [ ] Verify file upload validation in `mediaUploadSchema`: blocks non-image MIME types, malformed files, and files exceeding 5MB.
-  - [ ] Verify CMS pricing rule enforcement: empty or whitespace-only pricing notes are never rendered in the public DOM.
+  - [x] Implement automated security audit test suite in `tests/unit/security-audit.test.ts`.
+  - [x] Verify zero exposure of `SUPABASE_SERVICE_ROLE_KEY` in client components, bundles, or public exports.
+  - [x] Verify that unauthenticated requests to all admin Server Actions (`updateInquiryStatus`, `updateInquiryNotes`, `toggleServicePublished`, `upsertService`, `toggleProjectPublished`, `toggleProjectFeatured`, `upsertProject`, `updateSiteSettings`, `toggleSectionVisibility`, `updateHomepageSection`, `uploadMediaAsset`, `deleteMediaAsset`) reject with unauthorized errors via `assertAdmin()`.
+  - [x] Verify that anonymous client queries to `public.inquiries` return zero rows or throw permission errors (RLS enforcement).
+  - [x] Verify anti-spam honeypot behavior: non-empty `companyWebsite` in `submitInquiry` silently returns fake success without writing to the database.
+  - [x] Verify file upload validation in `mediaUploadSchema`: blocks non-image MIME types, malformed files, and files exceeding 5MB.
+  - [x] Verify CMS pricing rule enforcement: empty or whitespace-only pricing notes are never rendered in the public DOM.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (179/179), `npm run build` (21/21).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §19 for implementation details and verification results.

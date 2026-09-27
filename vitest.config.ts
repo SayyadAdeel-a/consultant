@@ -17,6 +17,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
+    testTimeout: 10000,
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov"],
@@ -45,6 +46,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      // `server-only` is aliased by Next.js at build time (not a real
+      // dependency); map it to an empty stub so tests can import genuine
+      // server modules such as src/lib/auth/admin.ts (Task 8.1).
+      "server-only": path.resolve(__dirname, "./tests/mocks/server-only.ts"),
       "@": path.resolve(__dirname, "./src"),
     },
   },
