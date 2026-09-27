@@ -265,3 +265,38 @@ _Note: Integravity's Task 7.1 spec re-scoped this task to the dashboard + naviga
   - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (106/106), `npm run build` (21/21).
 
 **Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §16 for implementation details and verification results.
+
+### Task 7.3: Services & Case Studies Manager
+
+- **Assignee**: OpenCode
+- **Status**: **COMPLETE (verified 2026-09-27)**
+- **Files**:
+  - `src/app/admin/services/page.tsx` (rewritten — gated list page, ordered by `display_order ASC`)
+  - `src/app/admin/projects/page.tsx` (rewritten — gated list page, ordered by `display_order ASC, created_at DESC`, plus fail-soft service lookup)
+  - `src/app/actions/services.ts` (new — `toggleServicePublished` + `upsertService` Server Actions)
+  - `src/app/actions/projects.ts` (new — `toggleProjectPublished` + `toggleProjectFeatured` + `upsertProject` Server Actions)
+  - `src/lib/validations/cms.ts` (new — shared `CmsActionResult`, `cmsIdSchema`, `flattenCmsIssues`, `tagListSchema`)
+  - `src/lib/validations/services.ts` (new — `SERVICE_ICON_NAMES` enum + `serviceSchema`)
+  - `src/lib/validations/projects.ts` (new — `projectSchema` with optional image/service rules)
+  - `src/components/admin/AdminDrawer.tsx` (new — shared accessible slide-over shell)
+  - `src/components/admin/ServicesTable.tsx` (new — manager table with optimistic publish toggle)
+  - `src/components/admin/ServiceEditorDrawer.tsx` (new — create/edit editor)
+  - `src/components/admin/ProjectsTable.tsx` (new — manager table with publish + featured toggles)
+  - `src/components/admin/ProjectEditorDrawer.tsx` (new — create/edit editor)
+  - `src/components/admin/PublishPill.tsx` (new — shared Published/Draft pill)
+  - `src/components/admin/service-icons.ts` (new — icon-name → Lucide component map)
+  - `src/components/admin/index.ts` (barrel exports `ServicesTable`, `ProjectsTable`)
+  - `src/types/cms.ts` (`ServiceRecord`, `ProjectRecord`, `ServiceOption` column picks)
+  - `tests/ui/admin-services.test.tsx` (10 tests), `tests/ui/admin-projects.test.tsx` (8 tests)
+- **Criteria**:
+  - [x] `/admin/services` and `/admin/projects` both call `await requireAdmin()` — unauthorized visitors redirect; demo mode (`SupabaseNotConfiguredError`) renders the fail-secure `AdminSetupPanel`.
+  - [x] Services list queries `public.services` ordered by `display_order ASC`; shows title, slug, icon (glyph + name), deliverables count, regulatory framework tags, optional pricing indicator (§5.5 — presence chip only, note text never rendered, blank → "—"), publication pill, display order index, and a per-row publish/unpublish quick action.
+  - [x] Projects list queries `public.projects` ordered by `display_order ASC, created_at DESC`; shows title, client type, location, completed year, associated service (fail-soft lookup), featured star/badge, publication pill, and per-row publish + feature quick actions.
+  - [x] Service editor drawer: title, slug, short description, full content, icon selector (curated Lucide names), pricing note (optional), display order, published toggle, deliverables (one-per-line tag list), regulatory frameworks (one-per-line tag list).
+  - [x] Project editor drawer: title, slug, client type, location, completed year, summary, challenge, solution, results, featured image URL, associated service selector, featured toggle, published toggle, display order.
+  - [x] `src/app/actions/services.ts` / `src/app/actions/projects.ts` — both `"use server"`; every action calls `await assertAdmin()` **first**; payloads validated with `serviceSchema` / `projectSchema`; implements `toggleServicePublished`, `upsertService`, `toggleProjectPublished`, `toggleProjectFeatured`, `upsertProject` (accepting `FormData | *Input`); each write calls `revalidatePath` for `/admin/services`, `/services`, `/admin/projects`, and `/`.
+  - [x] Fail-secure: missing Supabase credentials render `<AdminSetupPanel />`; validation failures return inline field errors without touching the database; unique-slug violations map to a friendly message.
+  - [x] Vitest suites cover mocked-row listing, optimistic toggles with revalidation, required-field validation errors, and pricing-note optionality.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (124/124), `npm run build` (21/21).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §17 for implementation details and verification results.

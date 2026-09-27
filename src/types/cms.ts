@@ -181,3 +181,53 @@ export type InquiryRecord = Pick<
   | "admin_notes"
   | "created_at"
 >;
+
+/**
+ * Editable columns surfaced in the admin services manager
+ * (docs/TASKS.md Task 7.3). Unedited columns (`hero_image_url`,
+ * `is_featured`, `meta_*`) are intentionally not fetched.
+ */
+export type ServiceRecord = Pick<
+  ServiceItem,
+  | "id"
+  | "slug"
+  | "title"
+  | "short_description"
+  | "full_content"
+  | "icon"
+  | "deliverables"
+  | "regulatory_frameworks"
+  | "pricing_note"
+  | "is_published"
+  | "display_order"
+>;
+
+/**
+ * Editable columns surfaced in the admin case studies manager
+ * (docs/TASKS.md Task 7.3). Gallery, industry, and meta columns are
+ * managed elsewhere and intentionally not fetched here.
+ */
+export type ProjectRecord = Pick<
+  ProjectItem,
+  | "id"
+  | "slug"
+  | "title"
+  | "client_type"
+  | "location"
+  | "summary"
+  | "challenge"
+  | "solution"
+  | "results"
+  | "featured_image_url"
+  | "service_id"
+  | "completed_year"
+  | "is_featured"
+  | "is_published"
+  | "display_order"
+>;
+
+/**
+ * Lightweight service lookup used by the case studies manager for the
+ * "Associated service" column and editor selector.
+ */
+export type ServiceOption = Pick<ServiceItem, "id" | "title" | "is_published">;
