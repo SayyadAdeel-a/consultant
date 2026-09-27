@@ -1,13 +1,17 @@
 import Link from "next/link";
 import { BadgeCheck, Clock, Leaf, Mail, MapPin, Phone } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import {
+  resolvePublicIdentity,
+  STATIC_CONTACT,
+  type PublicIdentity,
+} from "@/lib/data/identity";
 
 /**
- * Demo credentials and contact details.
+ * Demo credentials.
  *
- * These are static illustrative placeholders for the template; live
- * identity is managed through the CMS `site_settings` table once the
- * admin console (Phase 6/7) is wired up. The mandatory disclaimer at the
+ * Static illustrative placeholders for the template — there is no CMS
+ * field for professional certifications. The mandatory disclaimer at the
  * bottom of the footer clarifies their demonstration nature.
  */
 const credentials = [
@@ -17,13 +21,14 @@ const credentials = [
   "ISO 9001:2015 Quality Management Systems",
 ];
 
-const contact = {
-  addressLines: ["14 Marshview Lane, Suite 300", "Portland, Maine 04101"],
-  email: "inquiries@integravity.example",
-  phone: "(207) 555-0148",
-  phoneHref: "tel:+12075550148",
-  hours: "Monday – Friday, 8:00 AM – 5:00 PM ET",
-};
+interface FooterProps {
+  /**
+   * Resolved `site_settings` identity from the public layout
+   * (docs/TASKS.md Task 9.1): company name, tagline, office address,
+   * contact channels, and social links. Omitted → static defaults.
+   */
+  identity?: PublicIdentity;
+}
 
 /**
  * Public site footer.
@@ -32,8 +37,13 @@ const contact = {
  * inverted brand mark, environmental credentials, office contact details,
  * footer navigation, copyright, and the mandatory illustrative-content
  * disclaimer.
+ *
+ * Identity fields resolve from the CMS `site_settings` row (Task 9.1),
+ * falling back to `@/config/site` and the demo constants; social links
+ * render only when the CMS row provides them.
  */
-export function Footer() {
+export function Footer({ identity }: FooterProps) {
+  const site = identity ?? resolvePublicIdentity(null);
   const year = new Date().getFullYear();
 
   return (
@@ -42,18 +52,18 @@ export function Footer() {
         <div>
           <Link
             href="/"
-            aria-label={`${siteConfig.name} — home`}
+            aria-label={`${site.name} — home`}
             className="focus-visible:outline-ring inline-flex items-center gap-2.5 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             <span className="bg-brand-sage text-brand-charcoal flex size-9 items-center justify-center rounded-lg">
               <Leaf className="size-5" aria-hidden="true" />
             </span>
             <span className="font-heading text-xl font-semibold tracking-tight">
-              {siteConfig.name}
+              {site.name}
             </span>
           </Link>
           <p className="text-brand-sage mt-4 max-w-sm text-sm leading-relaxed">
-            {siteConfig.tagline}. Wetland delineation, environmental permitting,
+            {site.tagline}. Wetland delineation, environmental permitting,
             assessments, and land-use planning for coastal and terrestrial
             ecosystems.
           </p>
@@ -96,7 +106,7 @@ export function Footer() {
               <li className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
                 <span>
-                  {contact.addressLines.map((line) => (
+                  {site.addressLines.map((line) => (
                     <span key={line} className="block">
                       {line}
                     </span>
@@ -105,26 +115,41 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href={`mailto:${contact.email}`}
+                  href={`mailto:${site.email}`}
                   className="hover:text-brand-ivory focus-visible:outline-ring flex items-center gap-2.5 rounded-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   <Mail className="size-4 shrink-0" aria-hidden="true" />
-                  {contact.email}
+                  {site.email}
                 </a>
               </li>
               <li>
                 <a
-                  href={contact.phoneHref}
+                  href={site.phoneHref}
                   className="hover:text-brand-ivory focus-visible:outline-ring flex items-center gap-2.5 rounded-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
                 >
                   <Phone className="size-4 shrink-0" aria-hidden="true" />
-                  {contact.phone}
+                  {site.phone}
                 </a>
               </li>
               <li className="flex items-center gap-2.5">
                 <Clock className="size-4 shrink-0" aria-hidden="true" />
-                {contact.hours}
+                {STATIC_CONTACT.hours}
               </li>
+              {site.socialLinks.length > 0 ? (
+                <li className="flex flex-wrap gap-x-4 gap-y-2">
+                  {site.socialLinks.map((social) => (
+                    <a
+                      key={social.href}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-brand-ivory focus-visible:outline-ring rounded-sm text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+                    >
+                      {social.label}
+                    </a>
+                  ))}
+                </li>
+              ) : null}
             </ul>
           </address>
         </div>
@@ -133,7 +158,7 @@ export function Footer() {
       <div className="border-brand-ivory/10 border-t">
         <div className="container-editorial text-brand-sage flex flex-col gap-4 py-6 text-sm md:flex-row md:items-center md:justify-between">
           <p>
-            © {year} {siteConfig.name}. All rights reserved.
+            © {year} {site.name}. All rights reserved.
           </p>
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             {siteConfig.navigation.footerLegal.map((item) => (

@@ -5,6 +5,10 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, X } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import {
+  resolvePublicIdentity,
+  type PublicIdentity,
+} from "@/lib/data/identity";
 import { buttonVariants } from "@/components/ui/button";
 
 const FOCUSABLE_SELECTOR =
@@ -17,6 +21,8 @@ interface MobileNavProps {
   onClose: () => void;
   /** Ref to the header toggle button, used to restore focus on close. */
   toggleRef: RefObject<HTMLButtonElement | null>;
+  /** Resolved identity whose primary CTA renders as the drawer button. */
+  identity?: PublicIdentity;
 }
 
 /**
@@ -31,9 +37,15 @@ interface MobileNavProps {
  *   header bar stays visible above it.
  * - All motion is disabled when the user prefers reduced motion.
  */
-export function MobileNav({ open, onClose, toggleRef }: MobileNavProps) {
+export function MobileNav({
+  open,
+  onClose,
+  toggleRef,
+  identity,
+}: MobileNavProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
+  const cta = (identity ?? resolvePublicIdentity(null)).primaryCta;
 
   useEffect(() => {
     if (!open) return;
@@ -144,7 +156,7 @@ export function MobileNav({ open, onClose, toggleRef }: MobileNavProps) {
               </nav>
 
               <Link
-                href="/contact"
+                href={cta.href}
                 onClick={onClose}
                 className={buttonVariants({
                   variant: "default",
@@ -152,7 +164,7 @@ export function MobileNav({ open, onClose, toggleRef }: MobileNavProps) {
                   className: "mt-4 w-full justify-center",
                 })}
               >
-                Request a Consultation
+                {cta.label}
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </Link>
             </div>

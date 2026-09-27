@@ -15,6 +15,11 @@ import { hasPricingNote, serviceList } from "@/config/services";
  * Pricing Rule (optional note suppressed when null/empty), `notFound()`
  * for unrecognized slugs, static params, and dynamic metadata.
  *
+ * The catalog and detail pages are async since Task 9.1 (fail-safe CMS
+ * hydration); tests await them before rendering. The reads throw
+ * `SupabaseNotConfiguredError` in the test environment and fall back to
+ * the static `serviceList` config.
+ *
  * `next/link` is stubbed as a plain anchor; `next/navigation` is mocked so
  * `notFound()` throws a deterministic error we can assert against; a
  * minimal `IntersectionObserver` stub supports the shared animation
@@ -66,8 +71,8 @@ const detailPage = (slug: string) =>
   ServiceDetailPage({ params: Promise.resolve({ slug }) });
 
 describe("Service catalog (/services)", () => {
-  it("renders the four disciplines with badges, deliverables, and links", () => {
-    render(<ServicesIndexPage />);
+  it("renders the four disciplines with badges, deliverables, and links", async () => {
+    render(await ServicesIndexPage());
 
     expect(
       screen.getByRole("heading", { level: 1, name: /move projects forward/ }),
@@ -94,8 +99,8 @@ describe("Service catalog (/services)", () => {
     expect(screen.getByText("ASTM E1527-21")).toBeInTheDocument();
   });
 
-  it("closes with the consultation CTA banner", () => {
-    render(<ServicesIndexPage />);
+  it("closes with the consultation CTA banner", async () => {
+    render(await ServicesIndexPage());
 
     expect(
       screen.getByRole("heading", {

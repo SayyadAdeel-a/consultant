@@ -5,7 +5,19 @@ import { ArrowLeft, Check } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { FadeIn } from "@/components/animations";
 import { ConsultationCta } from "@/components/sections";
-import { hasPricingNote, services, serviceList } from "@/config/services";
+import {
+  hasPricingNote,
+  services,
+  serviceList,
+  type ServiceDetail,
+} from "@/config/services";
+import { resolvePublicIdentity } from "@/lib/data/identity";
+import {
+  getPublishedService,
+  getPublishedServices,
+  getSiteSettings,
+  hydrateServiceDetail,
+} from "@/lib/data/public";
 import { createPageMetadata } from "@/lib/seo";
 
 interface ServicePageProps {
@@ -13,13 +25,18 @@ interface ServicePageProps {
 }
 
 /**
- * Prerender the four known service slugs at build time. Unknown slugs are
- * still routed through the page at request time (default `dynamicParams`)
- * and rejected with `notFound()` below — once the CMS `services` table
- * lands (Phase 6-7), this returns the slugs of published services and
- * `dynamicParams` can be dropped.
+ * Prerender published service slugs at build time. Task 9.1: the slugs
+ * come from `public.services` when Supabase is configured (published
+ * rows only), falling back to the static catalog in demo mode. Unknown
+ * slugs still route through the page at request time (default
+ * `dynamicParams`) and are rejected with `notFound()` below.
  */
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const read = await getPublishedServices();
+  const rows = read.data ?? [];
+  if (rows.length > 0) {
+    return rows.map((service) => ({ slug: service.slug }));
+  }
   return serviceList.map((service) => ({ slug: service.slug }));
 }
 
@@ -27,35 +44,66 @@ export async function generateMetadata({
   params,
 }: ServicePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const service = services[slug];
+  const read = await getPublishedService(slug);
+  const fallback = services[slug];
+  // CMS rows win when configured (`meta_title`/`meta_description` first);
+  // unconfigured → static config. Unknown slugs still resolve metadata
+  // (the page itself 404s below); fall back to catalog-level copy rather
+  // than leaking the raw slug.
+  const cms = read.available ? read.data : undefined;
+  const title = cms
+    ? (cms.metaTitle ?? cms.title)
+    : (fallback?.title ?? "Services");
+  const description = cms
+    ? (cms.metaDescription ?? cms.summary)
+    : (fallback?.summary ??
+      "Environmental consulting services — wetland delineation, permitting, ASTM site assessments, and ecological planning.");
 
-  // Unknown slugs still resolve metadata (the page itself 404s below);
-  // fall back to catalog-level copy rather than leaking the raw slug.
   return createPageMetadata({
-    title: service ? service.title : "Services",
-    description: service
-      ? service.summary
-      : "Environmental consulting services — wetland delineation, permitting, ASTM site assessments, and ecological planning.",
+    title,
+    description,
     path: `/services/${slug}`,
   });
 }
 
 /**
- * Dynamic service detail template (docs/TASKS.md Task 4.1).
+ * Dynamic service detail template (docs/TASKS.md Task 4.1, hydrated in
+ * Task 9.1).
  *
  * Next.js 16: `params` is a Promise and must be awaited. Renders an
  * editorial deep dive — problem context, regulatory framework badges,
  * deliverables checklist, methodology milestones — and honours the CMS
  * Pricing Rule: the optional `pricingNote` renders only through
  * `hasPricingNote()`, so null/empty values are completely hidden.
+ *
+ * Data source (Task 9.1):
+ * - Supabase configured → the published `public.services` row is the
+ *   authority; a slug without a published row is `notFound()` (an
+ *   unpublished service can never be resurrected from static config).
+ * - Supabase unavailable (demo mode / query failure) → static config.
+ * - The closing banner resolves contact channels from `site_settings`.
  */
 export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params;
-  const service = services[slug];
+  const [serviceRead, settingsRead] = await Promise.all([
+    getPublishedService(slug),
+    getSiteSettings(),
+  ]);
+  const staticService = services[slug];
 
-  if (!service) {
+  let service: ServiceDetail;
+  if (serviceRead.available) {
+    if (!serviceRead.data) {
+      notFound();
+    }
+    service = hydrateServiceDetail(serviceRead.data);
+  } else if (staticService) {
+    service = staticService;
+  } else {
     notFound();
   }
+
+  const identity = resolvePublicIdentity(settingsRead.data);
 
   return (
     <>
@@ -202,7 +250,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
         </div>
       </section>
 
-      <ConsultationCta />
+      <ConsultationCta identity={identity} />
     </>
   );
 }

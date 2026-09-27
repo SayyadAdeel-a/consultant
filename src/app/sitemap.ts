@@ -1,12 +1,27 @@
 import type { MetadataRoute } from "next";
+import { serviceList } from "@/config/services";
 import { getSiteUrl } from "@/lib/env";
+import {
+  getSitemapProjectRoutes,
+  getSitemapServiceRoutes,
+} from "@/lib/data/public";
 
 /**
- * Sitemap generation. Static routes are listed here; when the CMS schema
- * lands (Phase 6), published service pages must be appended from the
- * database so new pages are discoverable without code changes.
+ * Sitemap generation (docs/TASKS.md Task 9.1).
+ *
+ * Static routes are listed here; published service and case-study pages
+ * are appended from Supabase (anon client, `is_published = TRUE` only)
+ * with `updated_at` as `lastModified`. When Supabase is unconfigured or
+ * returns nothing, the static `serviceList` keeps every demo service
+ * discoverable — the sitemap never fails.
+ *
+ * Revalidates hourly so newly published records reach crawlers without
+ * a redeploy (admin edits also purge this route on service/project
+ * saves via `revalidatePath`).
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
   const now = new Date();
 
@@ -31,8 +46,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // Phase 6+: append published service routes from Supabase here.
-  const cmsRoutes: MetadataRoute.Sitemap = [];
+  // Published service pages: CMS slugs first, static catalog as fallback.
+  const cmsServices = await getSitemapServiceRoutes();
+  const serviceEntries = cmsServices.length
+    ? cmsServices
+    : serviceList.map((service) => ({
+        slug: service.slug,
+        lastModified: null,
+      }));
 
-  return [...staticRoutes, ...cmsRoutes];
+  const serviceRoutes: MetadataRoute.Sitemap = serviceEntries.map(
+    ({ slug, lastModified }) => ({
+      url: `${base}/services/${slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+      lastModified: lastModified ?? undefined,
+    }),
+  );
+
+  // Published case studies (empty when unconfigured or unseeded).
+  const projectRoutes: MetadataRoute.Sitemap = (
+    await getSitemapProjectRoutes()
+  ).map(({ slug, lastModified }) => ({
+    url: `${base}/projects/${slug}`,
+    changeFrequency: "yearly" as const,
+    priority: 0.6,
+    lastModified: lastModified ?? undefined,
+  }));
+
+  return [...staticRoutes, ...serviceRoutes, ...projectRoutes];
 }

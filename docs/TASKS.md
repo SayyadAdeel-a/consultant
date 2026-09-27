@@ -375,10 +375,13 @@ _Note: Integravity's Task 7.1 spec re-scoped this task to the dashboard + naviga
 ### Task 9.1: Dynamic Sitemap, SEO Integration & Public CMS Data Binding
 
 - **Assignee**: OpenCode
-- **Status**: PENDING
+- **Status**: **COMPLETE (verified 2026-09-27)**
 - **Criteria**:
-  - [ ] Transform `src/app/sitemap.ts` into an async function that dynamically appends published services (`/services/[slug]`) and published projects from Supabase with graceful fallback to `@/config/services`.
-  - [ ] Connect public layout (Header & Footer) and homepage to read dynamic `site_settings` and `homepage_sections` when configured, falling back seamlessly to static configs.
-  - [ ] Verify image and font loading optimization (WebP/AVIF formats, priority flags on hero elements, zero layout shift).
-  - [ ] Verify Core Web Vitals targets: LCP <= 2.5s, INP <= 200ms, CLS <= 0.1.
-  - [ ] Implement automated test suite in `tests/ui/sitemap-seo.test.tsx` verifying dynamic sitemap generation and fallback behaviors.
+  - [x] Transform `src/app/sitemap.ts` into an async function that dynamically appends published services (`/services/[slug]`) and published projects from Supabase with graceful fallback to `@/config/services`.
+  - [x] Connect public layout (Header & Footer) and homepage to read dynamic `site_settings` and `homepage_sections` when configured, falling back seamlessly to static configs.
+  - [x] Verify image and font loading optimization (WebP/AVIF formats, priority flags on hero elements, zero layout shift).
+  - [x] Verify Core Web Vitals targets: LCP <= 2.5s, INP <= 200ms, CLS <= 0.1.
+  - [x] Implement automated test suite in `tests/ui/sitemap-seo.test.tsx` verifying dynamic sitemap generation and fallback behaviors.
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (190/190), `npm run build` (21/21).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §20 for implementation details and verification results.

@@ -2,27 +2,31 @@ import Link from "next/link";
 import { Mail, Phone } from "lucide-react";
 import { FadeIn } from "@/components/animations";
 import { buttonVariants } from "@/components/ui/button";
+import {
+  resolvePublicIdentity,
+  type PublicIdentity,
+} from "@/lib/data/identity";
 
-/**
- * Demo contact channels — mirrors the values in
- * `src/components/layout/Footer.tsx` until the CMS `site_settings` table
- * (Phase 6/7) becomes the source of truth for client-editable identity.
- */
-const contact = {
-  email: "inquiries@integravity.example",
-  phone: "(207) 555-0148",
-  phoneHref: "tel:+12075550148",
-};
+interface ConsultationCtaProps {
+  /**
+   * Resolved `site_settings` identity (docs/TASKS.md Task 9.1): phone,
+   * email, and the primary CTA come from the CMS row when provided;
+   * omitted → the static demo contact channels.
+   */
+  identity?: PublicIdentity;
+}
 
 /**
  * Closing consultation banner (docs/TASKS.md Task 3.4).
  *
  * High-contrast Forest Green finale to the homepage narrative: editorial
  * headline, primary ivory CTA to `/contact`, and direct phone / email
- * channels. Server component; reveal runs through the shared `FadeIn`
- * wrapper.
+ * channels — all resolved from the CMS identity with static fallbacks.
+ * Server component; reveal runs through the shared `FadeIn` wrapper.
  */
-export function ConsultationCta() {
+export function ConsultationCta({ identity }: ConsultationCtaProps) {
+  const site = identity ?? resolvePublicIdentity(null);
+
   return (
     <section
       aria-labelledby="consultation-heading"
@@ -44,7 +48,7 @@ export function ConsultationCta() {
 
           <div className="mt-9 flex flex-wrap items-center gap-4">
             <Link
-              href="/contact"
+              href={site.primaryCta.href}
               className={buttonVariants({
                 variant: "default",
                 size: "lg",
@@ -52,11 +56,11 @@ export function ConsultationCta() {
                   "bg-brand-ivory text-brand-forest hover:bg-brand-ivory/85 h-12 px-7 text-base",
               })}
             >
-              Request a Consultation
+              {site.primaryCta.label}
             </Link>
 
             <a
-              href={contact.phoneHref}
+              href={site.phoneHref}
               className={buttonVariants({
                 variant: "outline",
                 size: "lg",
@@ -65,11 +69,11 @@ export function ConsultationCta() {
               })}
             >
               <Phone aria-hidden="true" />
-              {contact.phone}
+              {site.phone}
             </a>
 
             <a
-              href={`mailto:${contact.email}`}
+              href={`mailto:${site.email}`}
               className={buttonVariants({
                 variant: "outline",
                 size: "lg",
@@ -78,7 +82,7 @@ export function ConsultationCta() {
               })}
             >
               <Mail aria-hidden="true" />
-              {contact.email}
+              {site.email}
             </a>
           </div>
         </FadeIn>

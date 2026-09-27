@@ -4,6 +4,12 @@ import { createPageMetadata } from "@/lib/seo";
 import { FadeIn, SlideUp } from "@/components/animations";
 import { ConsultationCta } from "@/components/sections";
 import { serviceList } from "@/config/services";
+import { resolvePublicIdentity } from "@/lib/data/identity";
+import {
+  getPublishedServices,
+  getSiteSettings,
+  hydrateServiceDetail,
+} from "@/lib/data/public";
 
 export const metadata = createPageMetadata({
   title: "Services",
@@ -13,17 +19,30 @@ export const metadata = createPageMetadata({
 });
 
 /**
- * Service catalog (docs/TASKS.md Task 4.1).
+ * Service catalog (docs/TASKS.md Task 4.1, hydrated in Task 9.1).
  *
- * Lists the four core disciplines from `src/config/services.ts` with
- * regulatory framework badges, key deliverables, and links into the
- * dynamic `/services/[slug]` template. Closes with the shared
- * consultation banner. CMS-backed service records replace this data in
- * Phase 6-7.
+ * Lists the core disciplines with regulatory framework badges, key
+ * deliverables, and links into the dynamic `/services/[slug]` template,
+ * closing with the shared consultation banner.
+ *
+ * Task 9.1: records come from `public.services` (published rows, catalog
+ * order) hydrated through `hydrateServiceDetail()`; when Supabase is
+ * unconfigured or nothing is seeded, the static `serviceList` renders
+ * instead (fail-safe static default). The banner resolves its contact
+ * channels from `site_settings` through the identity view-model.
  *
  * Server component; reveals run through the shared animation wrappers.
  */
-export default function ServicesIndexPage() {
+export default async function ServicesIndexPage() {
+  const [servicesRead, settingsRead] = await Promise.all([
+    getPublishedServices(),
+    getSiteSettings(),
+  ]);
+  const list = servicesRead.data?.length
+    ? servicesRead.data.map(hydrateServiceDetail)
+    : serviceList;
+  const identity = resolvePublicIdentity(settingsRead.data);
+
   return (
     <>
       <section className="py-16 md:py-20">
@@ -41,7 +60,7 @@ export default function ServicesIndexPage() {
           </FadeIn>
 
           <ul className="mt-12 grid gap-6 md:grid-cols-2">
-            {serviceList.map((service, index) => (
+            {list.map((service, index) => (
               <li key={service.slug}>
                 <SlideUp className="h-full" delay={index * 0.06}>
                   <article className="border-border bg-card flex h-full flex-col rounded-xl border p-7">
@@ -107,7 +126,7 @@ export default function ServicesIndexPage() {
         </div>
       </section>
 
-      <ConsultationCta />
+      <ConsultationCta identity={identity} />
     </>
   );
 }

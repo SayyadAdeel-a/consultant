@@ -3,9 +3,21 @@
 import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
 import { Leaf, Menu, X } from "lucide-react";
-import { siteConfig } from "@/config/site";
+import {
+  resolvePublicIdentity,
+  type PublicIdentity,
+} from "@/lib/data/identity";
 import { Navigation } from "./Navigation";
 import { MobileNav } from "./MobileNav";
+
+interface HeaderProps {
+  /**
+   * Resolved `site_settings` identity from the public layout
+   * (docs/TASKS.md Task 9.1). Omitted → static defaults, keeping the
+   * header renderable in isolation (tests, storybook-style usage).
+   */
+  identity?: PublicIdentity;
+}
 
 /**
  * Public site header.
@@ -14,8 +26,12 @@ import { MobileNav } from "./MobileNav";
  * toggle, and the accessible `MobileNav` drawer. This is a client component
  * because it owns the drawer open/close state; the drawer handles its own
  * focus management and returns focus to `toggleRef` when it closes.
+ *
+ * Brand name and the primary CTA resolve from the CMS identity passed by
+ * the server layout, falling back to `@/config/site`.
  */
-export function Header() {
+export function Header({ identity }: HeaderProps) {
+  const site = identity ?? resolvePublicIdentity(null);
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -30,18 +46,18 @@ export function Header() {
       <div className="container-editorial flex h-16 items-center justify-between gap-4">
         <Link
           href="/"
-          aria-label={`${siteConfig.name} — home`}
+          aria-label={`${site.name} — home`}
           className="focus-visible:outline-ring flex items-center gap-2.5 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2"
         >
           <span className="bg-brand-forest text-brand-ivory flex size-9 items-center justify-center rounded-lg">
             <Leaf className="size-5" aria-hidden="true" />
           </span>
           <span className="font-heading text-foreground text-xl font-semibold tracking-tight">
-            {siteConfig.name}
+            {site.name}
           </span>
         </Link>
 
-        <Navigation />
+        <Navigation identity={site} />
 
         <button
           ref={toggleRef}
@@ -60,7 +76,12 @@ export function Header() {
         </button>
       </div>
 
-      <MobileNav open={open} onClose={closeMenu} toggleRef={toggleRef} />
+      <MobileNav
+        open={open}
+        onClose={closeMenu}
+        toggleRef={toggleRef}
+        identity={site}
+      />
     </header>
   );
 }

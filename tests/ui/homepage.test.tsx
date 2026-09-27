@@ -11,6 +11,11 @@ import HomePage from "@/app/(public)/page";
  * keyboard navigation and ARIA wiring), and the closing consultation
  * banner.
  *
+ * `HomePage` is async since Task 9.1 (fail-safe CMS reads for section
+ * visibility and identity); every test awaits it before rendering. The
+ * reads throw `SupabaseNotConfiguredError` in the test environment and
+ * fall back to the static nine-section layout.
+ *
  * `next/link` is stubbed as a plain anchor for deterministic jsdom
  * rendering; a minimal `IntersectionObserver` stub supports the shared
  * `FadeIn` / `SlideUp` scroll-reveal wrappers (`whileInView` observes on
@@ -46,8 +51,8 @@ afterAll(() => {
 });
 
 describe("Homepage structure", () => {
-  it("assembles the complete nine-section narrative", () => {
-    const { container } = render(<HomePage />);
+  it("assembles the complete nine-section narrative", async () => {
+    const { container } = render(await HomePage());
 
     expect(container.querySelectorAll("section")).toHaveLength(9);
     expect(
@@ -63,8 +68,8 @@ describe("Homepage structure", () => {
     }
   });
 
-  it("presents section headings in narrative order", () => {
-    render(<HomePage />);
+  it("presents section headings in narrative order", async () => {
+    render(await HomePage());
 
     expect(
       screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent),
@@ -82,8 +87,8 @@ describe("Homepage structure", () => {
 });
 
 describe("TeamSection", () => {
-  it("features credentialed scientists and engineers with agency backgrounds", () => {
-    render(<HomePage />);
+  it("features credentialed scientists and engineers with agency backgrounds", async () => {
+    render(await HomePage());
 
     expect(document.getElementById("team")).not.toBeNull();
     expect(
@@ -110,8 +115,8 @@ describe("FaqSection", () => {
   const questionTrigger = (pattern: RegExp) =>
     screen.getByRole("button", { name: pattern });
 
-  it("toggles answers with aria-expanded and aria-controls wiring", () => {
-    render(<HomePage />);
+  it("toggles answers with aria-expanded and aria-controls wiring", async () => {
+    render(await HomePage());
 
     expect(document.getElementById("faq")).not.toBeNull();
     expect(screen.getAllByRole("button")).toHaveLength(4);
@@ -138,8 +143,8 @@ describe("FaqSection", () => {
     expect(screen.getByText(/ASTM E1527-21/)).toBeInTheDocument();
   });
 
-  it("navigates between questions with arrow keys", () => {
-    render(<HomePage />);
+  it("navigates between questions with arrow keys", async () => {
+    render(await HomePage());
 
     const first = questionTrigger(/Which regulations govern/);
     const second = questionTrigger(/When is an ASTM/);
@@ -164,8 +169,8 @@ describe("FaqSection", () => {
 });
 
 describe("ConsultationCta", () => {
-  it("closes with a banner offering consultation, phone, and email channels", () => {
-    render(<HomePage />);
+  it("closes with a banner offering consultation, phone, and email channels", async () => {
+    render(await HomePage());
 
     expect(
       screen.getByRole("heading", {
