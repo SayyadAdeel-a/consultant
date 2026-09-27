@@ -213,7 +213,27 @@ Replace the placeholder header and footer in `src/app/(public)/layout.tsx` with 
 
 **Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §14 for implementation details and verification results.
 
-### Task 7.1: CMS Dashboard & Content Management
+### Task 7.1: CMS Dashboard & Navigation Shell
 
 - **Assignee**: OpenCode
-- **Criteria**: Implement `/admin/content`, `/admin/services`, `/admin/projects`, and `/admin/inquiries`.
+- **Status**: **COMPLETE (verified 2026-09-27)**
+- **Files**:
+  - `src/app/admin/page.tsx` (rewritten — gated live dashboard)
+  - `src/components/admin/AdminNav.tsx` (new — route-aware client navigation)
+  - `src/components/admin/index.ts` (barrel exports `AdminNav`, `isActiveRoute`)
+  - `src/app/admin/layout.tsx` (static span list → `<AdminNav />`)
+  - `src/lib/validations/contact.ts` (shared `InquiryType` + `INQUIRY_TYPE_LABELS`)
+  - `src/components/forms/ContactForm.tsx` (refactored onto shared labels)
+  - `tests/ui/admin-dashboard.test.tsx` (7 tests)
+  - `tests/ui/admin-auth.test.tsx` (mock updates for the new layout nav)
+- **Criteria**:
+  - [x] `await requireAdmin()` enforced in `src/app/admin/page.tsx` — unauthorized users redirect to `/admin/login` (propagated, not swallowed).
+  - [x] Demo mode: `SupabaseNotConfiguredError` renders the configuration notice instead of throwing.
+  - [x] `AdminNav` client component replaces the static sidebar list, highlights the active route via `usePathname()`, and includes the specified lucide icons for all seven routes.
+  - [x] Live metrics queried from Supabase: inquiries total + `new` count, services published vs total, published case studies, media assets total.
+  - [x] Editorial metric cards with quick-links, "Recent Inquiries" preview (latest 3) linking to `/admin/inquiries`, and quick-action buttons (Add Service, Review Inquiries, Edit Settings).
+  - [x] Verified: `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test` (92/92), `npm run build` (21/21).
+
+**Status: COMPLETE (OpenCode, verified 2026-09-27)** — see `docs/HANDOFF.md` §15 for implementation details and verification results.
+
+_Note: Integravity's Task 7.1 spec re-scoped this task to the dashboard + navigation shell. The original Task 7.1 criteria ("Implement `/admin/content`, `/admin/services`, `/admin/projects`, and `/admin/inquiries`") remain pending as follow-up Phase 6 & 7 work._

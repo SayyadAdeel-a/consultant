@@ -10,20 +10,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { submitInquiry } from "@/app/actions/contact";
 import {
   INQUIRY_TYPES,
+  INQUIRY_TYPE_LABELS,
+  type InquiryType,
   contactInquirySchema,
   flattenContactIssues,
 } from "@/lib/validations/contact";
-
-type InquiryType = (typeof INQUIRY_TYPES)[number];
-
-const INQUIRY_TYPE_LABELS: Record<InquiryType, string> = {
-  general: "General inquiry",
-  "wetland-delineation": "Wetland delineation",
-  permitting: "Environmental permitting",
-  assessment: "Phase I/II environmental assessments",
-  planning: "Ecological planning",
-  other: "Other / not sure yet",
-};
 
 /**
  * Maps `?service=` search-param values (service slugs from the detail

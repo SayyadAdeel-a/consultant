@@ -16,6 +16,22 @@ export const INQUIRY_TYPES = [
   "other",
 ] as const;
 
+export type InquiryType = (typeof INQUIRY_TYPES)[number];
+
+/**
+ * Human-readable inquiry labels shared by the contact form's select and
+ * the admin dashboard's recent-inquiries preview, so display copy stays
+ * in sync with the enum it describes.
+ */
+export const INQUIRY_TYPE_LABELS: Record<InquiryType, string> = {
+  general: "General inquiry",
+  "wetland-delineation": "Wetland delineation",
+  permitting: "Environmental permitting",
+  assessment: "Phase I/II environmental assessments",
+  planning: "Ecological planning",
+  other: "Other / not sure yet",
+};
+
 export const contactInquirySchema = z.object({
   name: z
     .string()

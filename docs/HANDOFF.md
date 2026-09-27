@@ -458,3 +458,47 @@ Awaiting Integravity's review of Task 5.1. **Phase 5 has no remaining tasks** �
 ### 14.4 Next Task
 
 Awaiting Integravity's review of Task 6.1 — specifically the anon-client fail-secure admin check (RLS-filtered, mirrored from `hasAdminProfile()`), the inlined profile query, and the static→dynamic shift of `/admin`* routes. Next assigned work per `docs/TASKS.md`: **Task 7.1: CMS Dashboard & Content Management** (Phase 6 & 7).
+
+---
+
+## 15. Task 7.1 Implementation Results (OpenCode)
+
+**Status: COMPLETE — live administrative overview + interactive navigation shell, all criteria verified (2026-09-27).**
+
+### 15.1 Files Created / Modified
+
+| File                                   | Change     | Purpose                                                                                                                                                                                                                                                                                                                                                                                                             |
+| :------------------------------------- | :--------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/app/admin/page.tsx`               | Rewritten  | Gated live dashboard: `await requireAdmin()` first (unauthorized → redirect propagates); demo-mode catch renders a "Configuration required" panel embedding `AdminConfigNotice`; seven parallel queries (6 counts + latest-3 inquiries) through the anon client; editorial metric cards with `Manage →` quick-links, Recent Inquiries preview (status pills, dates, shared inquiry-type labels), Quick actions card |
+| `src/components/admin/AdminNav.tsx`    | Created    | Client sidebar nav: `usePathname()` route awareness via exported `isActiveRoute()` (exact match for `/admin` root, prefix match for children), `aria-current="page"` + sage pill (`bg-brand-sage/40 text-brand-forest`), the seven specified lucide icons, and a server-gate reminder footer                                                                                                                        |
+| `src/components/admin/index.ts`        | Updated    | Barrel now exports `AdminNav` + `isActiveRoute` (replaced the unused `adminComponentsPlaceholder`)                                                                                                                                                                                                                                                                                                                  |
+| `src/app/admin/layout.tsx`             | Updated    | Static `<span>` list + "navigation lands in Phase 7" note replaced with `<AdminNav />` inside the unchanged sidebar shell                                                                                                                                                                                                                                                                                           |
+| `src/lib/validations/contact.ts`       | Extended   | `InquiryType` type and `INQUIRY_TYPE_LABELS` moved here from `ContactForm` so the enum and its display labels share one module (contact select + admin preview consume the same map)                                                                                                                                                                                                                                |
+| `src/components/forms/ContactForm.tsx` | Refactored | Local type + labels map removed in favor of the shared imports — rendered copy byte-identical, all 8 contact tests unchanged                                                                                                                                                                                                                                                                                        |
+| `tests/ui/admin-dashboard.test.tsx`    | Created    | 7 tests: gated rendering with mocked metric queries (counts, labels, quick-action hrefs, recent inquiries), empty state, fail-soft `—`/unavailable degradation, redirect propagation when `requireAdmin()` fails (createClient untouched), demo-mode configuration panel, AdminNav active-route highlighting (nested route + exact `/admin` route)                                                                  |
+| `tests/ui/admin-auth.test.tsx`         | Updated    | Added the standard `next/link` anchor stub and `usePathname` to the `next/navigation` mock — the layout now renders `AdminNav`, so the auth suite's graph needs both exports                                                                                                                                                                                                                                        |
+
+### 15.2 Design Decisions
+
+- **Gate first, data second**: `requireAdmin()` runs before any query; the `try/catch` swallows **only** `SupabaseNotConfiguredError` (demo mode → configuration panel) and rethrows everything else, so `NEXT_REDIRECT` for unauthorized visitors propagates untouched — asserted by a test that also proves `createClient()` is never reached.
+- **RLS-correct counts without service-role**: metrics use the anon client under the admin's session; the migration's permissive `is_admin()` policies let admins see all rows (including unpublished), so "published vs total" is truthful. `media_assets` has no `is_published` column → total count only (as specified); `new` inquiries = `status = "new"`. _(Same least-privilege direction as Tasks 5.1/6.1 — flagged for Integravity review.)_
+- **Fail-soft metrics**: each count/list query is individually wrapped — errors log `console.error` and yield `null` → the card shows `—` with "Temporarily unavailable", and a recent-inquiries failure degrades to the empty-state message. Advisory data must never take the dashboard down (covered by a dedicated test with `failCounts: true`).
+- **Parallel fetches**: all seven reads run in one `Promise.all` (single render pass, concurrent round-trips).
+- **Active-route semantics**: `/admin` matches exactly (nested routes must not light up Dashboard — the classic `startsWith("/admin")` bug); children match exact-or-prefix with a trailing-slash boundary. Highlighting is pure UX (`aria-current` + pill); authorization remains exclusively server-side, as documented in the component and the nav footer copy.
+- **Shared inquiry labels**: `INQUIRY_TYPE_LABELS` (and its `InquiryType` key type) moved next to `INQUIRY_TYPES` in `src/lib/validations/contact.ts` — three consumers were emerging (form select, dashboard preview, future inquiry manager); contact DOM unchanged and tests green.
+- **Test harness for live queries**: the mocked Supabase client exposes a chainable builder (`select` → optional `eq` / `order` / `limit`) that resolves at _await_ time based on `(table, head, filters)` — the real page code runs end-to-end against scripted counts/rows rather than the page being mocked out.
+- **Spec deviation caught pre-verification**: `text-brand-foreground` isn't a design token (`--color-foreground` is) — corrected to `text-foreground` before running gates.
+
+### 15.3 Verification Results (2026-09-27)
+
+| Command                | Result                                                         |
+| :--------------------- | :------------------------------------------------------------- |
+| `npm run typecheck`    | ✅ PASSED (0 errors)                                           |
+| `npm run lint`         | ✅ PASSED (0 errors, 0 warnings)                               |
+| `npm run test`         | ✅ PASSED (92/92 — 13 node + 79 UI, incl. 7 new dashboard/nav) |
+| `npm run build`        | ✅ PASSED (21/21 routes — `/admin`* dynamic `ƒ`)               |
+| `npm run format:check` | ✅ PASSED (all files)                                          |
+
+### 15.4 Next Task
+
+Awaiting Integravity's review of Task 7.1 — specifically (a) count accuracy via the anon client under `is_admin()` RLS visibility, and (b) the task's re-scope: the original Task 7.1 criteria (the four CRUD admin surfaces `/admin/content`, `/admin/services`, `/admin/projects`, `/admin/inquiries`) remain pending as follow-up Phase 6 & 7 work.

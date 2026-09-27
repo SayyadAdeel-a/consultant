@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { AnchorHTMLAttributes, ReactNode } from "react";
 import AdminLayout from "@/app/admin/layout";
 import AdminLoginPage from "@/app/admin/login/page";
 import {
@@ -20,7 +21,8 @@ vi.mock("@/lib/supabase/server", () => ({
 
 // `redirect()` throws a control-flow error in Next — the mock mirrors that
 // so success paths assert as rejections. `useSearchParams` is needed
-// because the forms barrel pulls in ContactForm.
+// because the forms barrel pulls in ContactForm; `usePathname` because the
+// layout renders AdminNav.
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((url: string) => {
     const error = new Error(`NEXT_REDIRECT:${url}`);
@@ -28,6 +30,18 @@ vi.mock("next/navigation", () => ({
     throw error;
   }),
   useSearchParams: vi.fn(() => new URLSearchParams()),
+  usePathname: vi.fn(() => "/admin"),
+}));
+
+// AdminNav (rendered by the layout) links through next/link — stub it as a
+// plain anchor like the other suites.
+vi.mock("next/link", () => ({
+  default: ({
+    children,
+    ...props
+  }: AnchorHTMLAttributes<HTMLAnchorElement> & { children?: ReactNode }) => (
+    <a {...props}>{children}</a>
+  ),
 }));
 
 // The module carries `import "server-only"` — mock it so the graph stays
