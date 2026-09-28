@@ -12,7 +12,7 @@ import { AdminSetupPanel } from "./setup-panel";
 export const metadata = createPageMetadata({
   title: "Admin Dashboard",
   description:
-    "Live administrative overview for the IntegraVity admin console.",
+    "Live administrative overview for the Alderline Environmental CMS console.",
   path: "/admin",
   index: false,
 });

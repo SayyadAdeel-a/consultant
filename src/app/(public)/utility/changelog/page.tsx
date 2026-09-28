@@ -31,7 +31,7 @@ export default function ChangelogPage() {
               <div className="changelog-verison-wrap mb-4">
                 <h2 className="changelog-version text-2xl font-semibold">Ver 1.0</h2>
               </div>
-              <p className="text-learge text-[#81837d]">Initial Release — Alderline Environmental demonstration platform published with comprehensive practice area guides, baseline environmental insights, and interactive compliance workflow showcases.</p>
+              <p className="text-lg text-[#81837d]">Initial Release — Alderline Environmental demonstration platform published with comprehensive practice area guides, baseline environmental insights, and interactive compliance workflow showcases.</p>
             </div>
           </div>
         </section>

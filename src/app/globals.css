@@ -37,7 +37,7 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
-  /* IntegraVity brand palette (raw tokens declared in :root below). */
+  /* Alderline Environmental brand palette (raw tokens declared in :root below). */
   --color-brand-forest: var(--brand-forest);
   --color-brand-ivory: var(--brand-ivory);
   --color-brand-sage: var(--brand-sage);
@@ -65,7 +65,7 @@
 }
 
 /*
- * IntegraVity brand palette (see docs/DESIGN_SYSTEM.md).
+ * Alderline Environmental brand palette (see docs/DESIGN_SYSTEM.md).
  * Raw design tokens: keep in sync with the oklch theme values below.
  */
 :root {
@@ -170,7 +170,7 @@
 }
 
 /*
- * IntegraVity design-system primitives (see docs/DESIGN_SYSTEM.md).
+ * Alderline Environmental design-system primitives (see docs/DESIGN_SYSTEM.md).
  * Editorial layout utilities shared by public pages. The CMS admin uses
  * standard shadcn spacing and does not need these.
  */
@@ -543,4 +543,81 @@ main {
 @keyframes pageFadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Admin CMS layout — heading size reset
+ * ecolia.css sets global h1 { font-size: 38px } and h2 { font-size: 32px }
+ * which bleeds into the admin shell. The .admin-area class applied in the
+ * admin layout resets headings to respect Tailwind utility classes.
+ * ───────────────────────────────────────────────────────────────────────────── */
+.admin-area h1,
+.admin-area h2,
+.admin-area h3,
+.admin-area h4,
+.admin-area h5,
+.admin-area h6 {
+  font-size: revert-layer;
+  line-height: revert-layer;
+  font-weight: revert-layer;
+  margin-top: 0;
+  margin-bottom: 0;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * About page marquee animation
+ * ───────────────────────────────────────────────────────────────────────────── */
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.about-story-marquee-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: marqueeScroll 28s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-story-marquee-track {
+    animation: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Mobile admin sidebar
+ * ───────────────────────────────────────────────────────────────────────────── */
+.admin-mobile-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(21, 25, 13, 0.4);
+  z-index: 40;
+  backdrop-filter: blur(2px);
+}
+
+.admin-mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 15rem;
+  background: var(--background);
+  border-right: 1px solid var(--border);
+  z-index: 50;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-mobile-sidebar.open {
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-mobile-sidebar {
+    transition: none;
+  }
 }

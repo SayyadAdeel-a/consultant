@@ -157,7 +157,7 @@ export default function AboutPage() {
 
               {/* Continuous Infinite CSS Marquee with Sector Marks */}
               <div className="about-story-marquee-wrap overflow-hidden py-8">
-                <div className="about-story-marquee-track flex items-center gap-12">
+                <div className="about-story-marquee-track gap-12">
                   {[...capabilitySectors, ...capabilitySectors].map((sector, idx) => (
                     <div key={idx} className="flex items-center gap-4 flex-shrink-0 opacity-80 hover:opacity-100 transition-opacity">
                       <Image
