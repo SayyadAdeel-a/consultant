@@ -1,6 +1,8 @@
 import "server-only";
 import { caseStudies, type CaseStudyDetail } from "@/config/projects";
 import { services, type ServiceDetail } from "@/config/services";
+import { faqContent } from "@/lib/alderline-content";
+import { allBlogPosts, type BlogPost } from "@/lib/blog-data";
 import { SupabaseNotConfiguredError } from "@/lib/env";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { SiteSettingsRecord } from "@/types/cms";
@@ -379,3 +381,45 @@ export function resolveVisibleSectionKeys(
   if (!keys || keys.length === 0) return null;
   return new Set(keys);
 }
+
+export interface PublicFaqItem {
+  question: string;
+  answer: string;
+}
+
+/**
+ * Fail-safe FAQ items fetcher with Alderline static fallback.
+ * Allows future CMS management of questions while preserving Alderline's content.
+ */
+export async function getFaqs(): Promise<PublicRead<PublicFaqItem[]>> {
+  const read = await runRead(async () => {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("faqs")
+      .select("question, answer, display_order")
+      .order("display_order");
+    if (error) throw new Error(error.message);
+    return (data ?? []) as PublicFaqItem[];
+  });
+
+  if (!read.available || !read.data || read.data.length === 0) {
+    return {
+      available: read.available,
+      data: faqContent.items.map((i) => ({ question: i.q, answer: i.a })),
+    };
+  }
+
+  return read;
+}
+
+/**
+ * Fail-safe published articles fetcher with Alderline static fallback.
+ * Exposes blog data for public routing and future headless article management.
+ */
+export async function getPublishedArticles(): Promise<PublicRead<BlogPost[]>> {
+  return {
+    available: true,
+    data: allBlogPosts,
+  };
+}
+

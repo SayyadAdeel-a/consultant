@@ -142,7 +142,7 @@ describe("Mobile navigation", () => {
     });
 
     // Focus order: close button -> nav links -> CTA -> wraps to close.
-    for (let i = 0; i < 5; i += 1) {
+    for (let i = 0; i < siteConfig.navigation.public.length + 1; i += 1) {
       await user.tab();
     }
     expect(cta).toHaveFocus();

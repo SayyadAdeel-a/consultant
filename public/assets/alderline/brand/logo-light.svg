@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" fill="none" class="alderline-brand-logo-light">
+  <!-- Alderline Leaf Emblem -->
+  <g transform="translate(4, 4)">
+    <!-- Outer Leaf Outline -->
+    <path d="M 20 2 C 10 12 4 22 4 30 C 4 36 11 40 20 40 C 29 40 36 36 36 30 C 36 22 30 12 20 2 Z" 
+          stroke="#f6f2eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <!-- Central Stem & Veins -->
+    <path d="M 20 2 L 20 44" stroke="#f6f2eb" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 20 12 L 12 18" stroke="#f6f2eb" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 20 12 L 28 18" stroke="#f6f2eb" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 20 20 L 10 27" stroke="#f6f2eb" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 20 20 L 30 27" stroke="#f6f2eb" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 20 28 L 12 35" stroke="#f6f2eb" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 20 28 L 28 35" stroke="#f6f2eb" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Wordmark -->
+  <text x="54" y="24" font-family="Inter, -apple-system, sans-serif" font-size="18" font-weight="700" letter-spacing="0.12em" fill="#f6f2eb">ALDERLINE</text>
+  <text x="55" y="38" font-family="Inter, -apple-system, sans-serif" font-size="9" font-weight="500" letter-spacing="0.28em" fill="#dfe0d4">ENVIRONMENTAL</text>
+</svg>

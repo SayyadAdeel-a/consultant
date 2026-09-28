@@ -109,7 +109,7 @@ describe("Service catalog (/services)", () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /Request a Consultation/i }),
+      screen.getAllByRole("link", { name: /Request a Consultation/i })[0],
     ).toHaveAttribute("href", "/contact");
     expect(
       screen.getByRole("link", { name: /\(207\) 555-0148/ }),

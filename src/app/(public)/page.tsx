@@ -1,47 +1,20 @@
-import { createPageMetadata } from "@/lib/seo";
-import { siteConfig } from "@/config/site";
-import { resolvePublicIdentity } from "@/lib/data/identity";
+import { Navbar } from "@/components/ecolia/Navbar";
+import { HeroSection } from "@/components/ecolia/HeroSection";
+import { AboutSection } from "@/components/ecolia/AboutSection";
+import { VisionarySection } from "@/components/ecolia/VisionarySection";
+import { ToolsSection } from "@/components/ecolia/ToolsSection";
+import { TestimonialSection } from "@/components/ecolia/TestimonialSection";
+import { BlogSection } from "@/components/ecolia/BlogSection";
+import { FaqSection } from "@/components/ecolia/FaqSection";
+import { Footer } from "@/components/ecolia/Footer";
+import { EcoliaAnimations } from "@/components/ecolia/Animations";
 import {
   getSiteSettings,
   getVisibleHomepageSections,
   resolveVisibleSectionKeys,
 } from "@/lib/data/public";
-import {
-  ApproachSection,
-  CaseStudySpotlight,
-  ConsultationCta,
-  CredibilitySection,
-  FaqSection,
-  HeroSection,
-  IndustriesSection,
-  ServicesGrid,
-  TeamSection,
-} from "@/components/sections";
+import { resolvePublicIdentity } from "@/lib/data/identity";
 
-export const metadata = createPageMetadata({
-  title: "Home",
-  description: siteConfig.description,
-  path: "/",
-});
-
-/**
- * Homepage — the complete nine-section narrative:
- * hero → credibility → services → industries → case study → approach →
- * team → FAQ → consultation CTA.
- *
- * Task 9.1 (docs/TASKS.md):
- * - Section visibility is checked against `public.homepage_sections`
- *   when Supabase is configured: hidden sections (`is_visible = false`)
- *   are excluded from rendering. An unavailable or unseeded read falls
- *   back to showing all nine sections (fail-safe static default).
- * - The hero resolves its tagline and CTA pair from `site_settings`
- *   through the identity view-model; the closing banner reads the same
- *   identity. All other section copy remains static demo content —
- *   homepage copy editing (beyond visibility) is not part of this task.
- *
- * Every section is a server component; only the shared animation wrappers
- * and the FAQ accordion cross the client boundary.
- */
 export default async function HomePage() {
   const [settingsRead, sectionsRead] = await Promise.all([
     getSiteSettings(),
@@ -52,16 +25,41 @@ export default async function HomePage() {
   const show = (key: string) => !visibleSections || visibleSections.has(key);
 
   return (
-    <>
-      <HeroSection identity={identity} />
-      {show("credibility") && <CredibilitySection />}
-      {show("services") && <ServicesGrid />}
-      {show("industries") && <IndustriesSection />}
-      {show("projects") && <CaseStudySpotlight />}
-      {show("approach") && <ApproachSection />}
-      {show("team") && <TeamSection />}
-      {show("faq") && <FaqSection />}
-      {show("cta") && <ConsultationCta identity={identity} />}
-    </>
+    <div className="min-h-screen bg-[#f6f2eb] text-[#15190d] flex flex-col font-sans selection:bg-[#15190d] selection:text-[#f6f2eb]">
+      {/* GSAP Motion & ScrollTrigger Controller */}
+      <EcoliaAnimations />
+
+      {/* Fixed Sticky Header */}
+      <Navbar cta={settingsRead.data?.cta_settings ? identity.primaryCta : undefined} />
+
+      {/* Main Flow Content */}
+      <main className="flex-grow">
+        {/* Hero Section with Looping Forest Video & Pill Ticker */}
+        {show("hero") && (
+          <HeroSection headline={settingsRead.data?.tagline || undefined} />
+        )}
+
+        {/* About Section with Customer Ratings & Modern Green Energy Transition */}
+        {show("credibility") && <AboutSection />}
+
+        {/* Visionary Section with 3 Innovation & Legal Capabilities Cards */}
+        {show("approach") && <VisionarySection />}
+
+        {/* Tools Section with 2x2 Clean Energy Infrastructure Cards */}
+        {show("services") && <ToolsSection />}
+
+        {/* Testimonials & 55% / 10k+ Impact Metric Counters */}
+        {show("team") && <TestimonialSection />}
+
+        {/* Low-Carbon Thinking Field Notes & Blog Cards */}
+        {show("projects") && <BlogSection />}
+
+        {/* FAQ Interactive Accordion */}
+        {show("faq") && <FaqSection />}
+      </main>
+
+      {/* Forest Dark Footer */}
+      <Footer />
+    </div>
   );
 }

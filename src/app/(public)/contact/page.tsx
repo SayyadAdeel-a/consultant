@@ -1,4 +1,7 @@
-import { Suspense } from "react";
+import React, { Suspense } from "react";
+import { Navbar } from "@/components/ecolia/Navbar";
+import { Footer } from "@/components/ecolia/Footer";
+import { EcoliaAnimations } from "@/components/ecolia/Animations";
 import { ContactForm } from "@/components/forms";
 import { resolvePublicIdentity, STATIC_CONTACT } from "@/lib/data/identity";
 import { getSiteSettings } from "@/lib/data/public";
@@ -7,45 +10,25 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata = createPageMetadata({
   title: "Contact",
   description:
-    "Request a consultation with IntegraVity — wetland delineation, permitting, environmental assessments, and ecological planning inquiries are answered by a consultant within one business day.",
+    "Start a conversation with Alderline Environmental — wetland delineation, permitting, environmental assessments, and ecological planning inquiries are answered by a senior consultant within one business day.",
   path: "/contact",
 });
 
-/**
- * Office details resolve from the CMS `site_settings` row through the
- * shared identity view-model (Task 10.1), so the address, email, and
- * phone stay in lockstep with `/admin/settings`, the site header, and
- * the footer. Opening hours have no `site_settings` column and keep the
- * static default from `STATIC_CONTACT`.
- */
 const expectSteps = [
   {
     title: "Submit",
-    body: "Your inquiry goes straight into our confidential intake queue — never listed publicly, readable only by administrators.",
+    body: "Your inquiry goes directly into our confidential intake queue — never listed publicly, readable only by project administrators.",
   },
   {
     title: "Review",
-    body: "A consultant reviews your scope, permitting body, and timeline within one business day.",
+    body: "A senior environmental consultant reviews your site constraints, permitting body, and project timeline within one business day.",
   },
   {
     title: "Response",
-    body: "We reply by email with scoping questions, recommended next steps, or a proposed call time.",
+    body: "We reply with scoping recommendations, preliminary regulatory checklists, or a proposed project kickoff call.",
   },
 ];
 
-/**
- * Contact page (docs/TASKS.md Task 5.1, identity-bound in Task 10.1).
- * Editorial two-column layout: office details and a "What to expect"
- * timeline on the left, the client `<ContactForm />` (server action +
- * honeypot intake) on the right inside a `Suspense` boundary — required
- * because the form reads `useSearchParams` for `?service=` pre-selection
- * during static prerendering.
- *
- * Office details read the CMS `site_settings` row through
- * `resolvePublicIdentity()`, so they stay in lockstep with the header,
- * footer, and `/admin/settings`; demo mode falls back to the static
- * defaults byte-identical to the previous hard-coded copy.
- */
 export default async function ContactPage() {
   const settingsRead = await getSiteSettings();
   const identity = resolvePublicIdentity(settingsRead.data);
@@ -58,92 +41,106 @@ export default async function ContactPage() {
   };
 
   return (
-    <section className="py-16 md:py-20">
-      <div className="container-editorial">
-        <p className="text-eyebrow text-muted-foreground">Contact</p>
-        <h1 className="text-display-lg mt-3 max-w-2xl">
-          Start a conversation about your project
-        </h1>
-        <p className="text-muted-foreground mt-5 max-w-2xl text-lg">
-          Tell us about your site, your timeline, and the approval you are
-          chasing. Every inquiry is read by a consultant — not a ticket queue.
-        </p>
+    <div className="min-h-screen bg-[#f6f2eb] text-[#15190d] flex flex-col font-sans selection:bg-[#15190d] selection:text-[#f6f2eb]">
+      <EcoliaAnimations />
+      <Navbar />
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:gap-14">
-          {/* Left column — office details + what to expect */}
-          <div className="space-y-10">
-            <div>
-              <h2 className="font-heading text-xl font-semibold">Office</h2>
-              <address className="text-muted-foreground mt-4 space-y-3 text-sm not-italic">
-                <span className="block space-y-0.5">
-                  {office.addressLines.map((line) => (
-                    <span key={line} className="block">
-                      {line}
-                    </span>
-                  ))}
-                </span>
-                <span className="block">
-                  <a
-                    href={`mailto:${office.email}`}
-                    className="text-brand-forest font-medium underline-offset-4 hover:underline"
-                  >
-                    {office.email}
-                  </a>
-                </span>
-                <span className="block">
-                  <a
-                    href={office.phoneHref}
-                    className="text-brand-forest font-medium underline-offset-4 hover:underline"
-                  >
-                    {office.phone}
-                  </a>
-                </span>
-                <span className="block">{office.hours}</span>
-              </address>
-            </div>
+      <main className="flex-grow">
+        <section className="breadcrumb-section contact-secton py-16 md:py-24">
+          <div className="w-layout-blockcontainer container w-container">
+            <div className="contact-content-wrap">
+              <div className="contact-title-with-form">
+                <div className="contact-title-wrap mb-10">
+                  <h1 className="section-title contact-title title-anim text-4xl md:text-6xl font-bold tracking-tight">
+                    Start A Conversation About Your Project
+                  </h1>
+                  <p className="text-muted-text mt-4 max-w-2xl text-lg fade-anim">
+                    Tell us about your site, your timeline, and the environmental approvals you are pursuing. Every inquiry is reviewed directly by a technical specialist.
+                  </p>
+                </div>
 
-            <div>
-              <h2 className="font-heading text-xl font-semibold">
-                What to expect
-              </h2>
-              <ol className="mt-4">
-                {expectSteps.map((step, index) => (
-                  <li
-                    key={step.title}
-                    className="border-brand-sage border-t py-4"
+                <div className="contact-form-wrap w-form border border-[#cac7c1] rounded-2xl p-6 md:p-8 bg-[#f6f2eb]">
+                  <Suspense
+                    fallback={
+                      <div
+                        aria-hidden="true"
+                        className="border border-[#cac7c1] bg-[#dfe0d4]/30 h-[32rem] rounded-xl animate-pulse"
+                      />
+                    }
                   >
-                    <div className="flex items-baseline gap-3">
-                      <span className="text-brand-forest text-sm font-semibold">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <h3 className="font-heading text-sm font-semibold">
-                        {step.title}
-                      </h3>
+                    <ContactForm />
+                  </Suspense>
+                </div>
+              </div>
+
+              {/* S30: Office Contact Information & What to Expect */}
+              <div className="contact-address-inner box-visible space-y-8 mt-10 lg:mt-0">
+                <div className="visible-item border border-[#cac7c1] rounded-2xl p-6 bg-[#f6f2eb]">
+                  <h2 className="text-xl font-semibold mb-4 text-[#15190d]">Office</h2>
+                  <address className="not-italic space-y-3 text-sm text-[#81837d]">
+                    <div className="space-y-0.5">
+                      {office.addressLines.map((line) => (
+                        <div key={line} className="text-[#15190d] font-medium">
+                          {line}
+                        </div>
+                      ))}
                     </div>
-                    <p className="text-muted-foreground mt-1.5 pl-8 text-sm leading-relaxed">
-                      {step.body}
-                    </p>
-                  </li>
-                ))}
-              </ol>
+                    <div>
+                      <span className="block text-xs uppercase tracking-wider text-[#81837d] font-semibold mb-0.5">Direct Inquiry Line</span>
+                      <a
+                        href={office.phoneHref}
+                        className="text-[#15190d] font-semibold hover:underline"
+                      >
+                        {office.phone}
+                      </a>
+                    </div>
+                    <div>
+                      <span className="block text-xs uppercase tracking-wider text-[#81837d] font-semibold mb-0.5">Project Inbox</span>
+                      <a
+                        href={`mailto:${office.email}`}
+                        className="text-[#15190d] font-semibold hover:underline"
+                      >
+                        {office.email}
+                      </a>
+                    </div>
+                    <div className="pt-1 text-xs text-[#81837d]">
+                      {office.hours}
+                    </div>
+                  </address>
+                </div>
+
+                <div className="visible-item border border-[#cac7c1] rounded-2xl p-6 bg-[#f6f2eb]">
+                  <h2 className="text-xl font-semibold mb-4 text-[#15190d]">
+                    What to expect
+                  </h2>
+                  <ol className="space-y-4">
+                    {expectSteps.map((step, index) => (
+                      <li
+                        key={step.title}
+                        className="border-t border-[#cac7c1] pt-3 first:border-0 first:pt-0"
+                      >
+                        <div className="flex items-baseline gap-2 mb-1">
+                          <span className="text-xs font-mono font-bold text-[#81837d]">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                          <h3 className="text-sm font-semibold text-[#15190d]">
+                            {step.title}
+                          </h3>
+                        </div>
+                        <p className="text-xs text-[#81837d] leading-relaxed pl-6">
+                          {step.body}
+                        </p>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
             </div>
           </div>
+        </section>
+      </main>
 
-          {/* Right column — consultation request form */}
-          <div>
-            <Suspense
-              fallback={
-                <div
-                  aria-hidden="true"
-                  className="border-border bg-muted/40 h-[32rem] rounded-xl border"
-                />
-              }
-            >
-              <ContactForm />
-            </Suspense>
-          </div>
-        </div>
-      </div>
-    </section>
+      <Footer />
+    </div>
   );
 }

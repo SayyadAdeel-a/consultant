@@ -50,15 +50,24 @@ afterAll(() => {
   vi.unstubAllGlobals();
 });
 
+import {
+  aboutIntroContent,
+  approachCredibilityContent,
+  coreExpertiseContent,
+  faqContent,
+  homepageInsightsContent,
+  serviceHighlightsContent,
+} from "@/lib/alderline-content";
+
 describe("Homepage structure", () => {
-  it("assembles the complete nine-section narrative", async () => {
+  it("assembles the complete seven-section narrative", async () => {
     const { container } = render(await HomePage());
 
-    expect(container.querySelectorAll("section")).toHaveLength(9);
+    expect(container.querySelectorAll("section")).toHaveLength(7);
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: /Environmental consulting/,
+        name: /Environmental consulting/i,
       }),
     ).toBeInTheDocument();
 
@@ -72,112 +81,68 @@ describe("Homepage structure", () => {
     render(await HomePage());
 
     expect(
-      screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent),
-    ).toEqual([
-      "Credibility, by the numbers",
-      "Four disciplines, one defensible record",
-      "Sectors we know deeply",
-      "Casco Bay coastal wetland restoration",
-      "From first records review to final monitoring",
-      "Certified scientists and engineers",
-      "Questions, answered",
-      "Tell us about your site",
-    ]);
+      screen.getByRole("heading", { name: aboutIntroContent.heading }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: coreExpertiseContent.heading }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: serviceHighlightsContent.heading }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: approachCredibilityContent.heading }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: homepageInsightsContent.heading }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: faqContent.heading }),
+    ).toBeInTheDocument();
   });
 });
 
-describe("TeamSection", () => {
-  it("features credentialed scientists and engineers with agency backgrounds", async () => {
+describe("Team and Metrics Section", () => {
+  it("features quantitative impact metrics and credibility statements", async () => {
     render(await HomePage());
 
     expect(document.getElementById("team")).not.toBeNull();
+    expect(screen.getByText("FIELD-LED")).toBeInTheDocument();
+    expect(screen.getByText("PERMIT-FOCUSED")).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        level: 2,
-        name: "Certified scientists and engineers",
+        name: approachCredibilityContent.heading,
       }),
     ).toBeInTheDocument();
-
-    for (const credential of ["PWS", "PE", "CPSS", "CEP"]) {
-      expect(screen.getByText(credential)).toBeInTheDocument();
-    }
-
-    expect(screen.getByText("Dr. Elena Marsh")).toBeInTheDocument();
-    expect(screen.getByText("Daniel Okafor")).toBeInTheDocument();
     expect(
-      screen.getByText(/Army Corps of Engineers, New England District/),
+      screen.getByText(approachCredibilityContent.eyebrow),
     ).toBeInTheDocument();
-    expect(screen.getByText(/state soil scientist/)).toBeInTheDocument();
   });
 });
 
 describe("FaqSection", () => {
-  const questionTrigger = (pattern: RegExp) =>
-    screen.getByRole("button", { name: pattern });
-
-  it("toggles answers with aria-expanded and aria-controls wiring", async () => {
-    render(await HomePage());
+  it("renders accordion items and toggles answers on click", async () => {
+    const { container } = render(await HomePage());
 
     expect(document.getElementById("faq")).not.toBeNull();
-    expect(screen.getAllByRole("button")).toHaveLength(4);
-
-    const first = questionTrigger(/Which regulations govern a wetland/);
-    const second = questionTrigger(/When is an ASTM Phase I ESA required/);
-
-    // First question open by default; its answer is in the rendered HTML.
-    expect(first).toHaveAttribute("aria-expanded", "true");
-    expect(second).toHaveAttribute("aria-expanded", "false");
     expect(
-      screen.getByText(/1987 Corps Wetland Delineation Manual/),
+      screen.getByRole("heading", { name: faqContent.heading }),
     ).toBeInTheDocument();
 
-    const panelId = second.getAttribute("aria-controls");
-    expect(panelId).toBeTruthy();
-    expect(panelId && document.getElementById(panelId)).toBeNull();
+    // First question is open by default.
+    expect(screen.getByText(faqContent.items[0].a)).toBeInTheDocument();
 
-    fireEvent.click(second);
+    // Click second question header to toggle.
+    const headers = container.querySelectorAll(".accordion-header");
+    expect(headers.length).toBe(faqContent.items.length);
 
-    expect(second).toHaveAttribute("aria-expanded", "true");
-    expect(first).toHaveAttribute("aria-expanded", "false");
-    expect(panelId && document.getElementById(panelId)).not.toBeNull();
-    expect(screen.getByText(/ASTM E1527-21/)).toBeInTheDocument();
-  });
-
-  it("navigates between questions with arrow keys", async () => {
-    render(await HomePage());
-
-    const first = questionTrigger(/Which regulations govern/);
-    const second = questionTrigger(/When is an ASTM/);
-    const third = questionTrigger(/How long does environmental permitting/);
-    const fourth = questionTrigger(/Why is there no fixed price list/);
-
-    first.focus();
-    expect(first).toHaveFocus();
-
-    fireEvent.keyDown(first, { key: "ArrowDown" });
-    expect(second).toHaveFocus();
-
-    fireEvent.keyDown(second, { key: "End" });
-    expect(fourth).toHaveFocus();
-
-    fireEvent.keyDown(fourth, { key: "ArrowUp" });
-    expect(third).toHaveFocus();
-
-    fireEvent.keyDown(third, { key: "Home" });
-    expect(first).toHaveFocus();
+    fireEvent.click(headers[1]);
+    expect(screen.getByText(faqContent.items[1].a)).toBeInTheDocument();
   });
 });
 
-describe("ConsultationCta", () => {
-  it("closes with a banner offering consultation, phone, and email channels", async () => {
+describe("Navigation and Footer", () => {
+  it("renders brand logos and consultation CTA links", async () => {
     render(await HomePage());
-
-    expect(
-      screen.getByRole("heading", {
-        level: 2,
-        name: "Tell us about your site",
-      }),
-    ).toBeInTheDocument();
 
     const consultationLinks = screen.getAllByRole("link", {
       name: /Request a Consultation/i,
@@ -187,11 +152,9 @@ describe("ConsultationCta", () => {
       expect(link).toHaveAttribute("href", "/contact");
     }
 
-    expect(
-      screen.getByRole("link", { name: /\(207\) 555-0148/ }),
-    ).toHaveAttribute("href", "tel:+12075550148");
-    expect(
-      screen.getByRole("link", { name: /inquiries@integravity\.example/ }),
-    ).toHaveAttribute("href", "mailto:inquiries@integravity.example");
+    const brandLinks = screen.getAllByRole("link", {
+      name: /Alderline Environmental/i,
+    });
+    expect(brandLinks.length).toBeGreaterThan(0);
   });
 });

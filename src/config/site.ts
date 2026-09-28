@@ -10,32 +10,34 @@ import type { SiteConfig } from "@/types";
  * from both server and client components.
  */
 export const siteConfig: SiteConfig = {
-  name: "IntegraVity",
-  shortName: "IntegraVity",
-  tagline: "Environmental consulting, engineered with integrity",
+  name: "Alderline Environmental",
+  shortName: "Alderline",
+  tagline: "Environmental insight. Practical solutions.",
   description:
-    "Demonstration website template for environmental consulting and engineering firms: wetland delineation, permitting, assessments, and land-use planning.",
+    "Alderline Environmental helps project teams understand site constraints, navigate permitting pathways, and move forward with defensible environmental planning.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   locale: "en_US",
-  ogImage: "/images/og-default.png",
+  ogImage: "/assets/alderline/brand/touch-icon.jpg",
   keywords: [
     "environmental consulting",
     "wetland delineation",
     "environmental permitting",
-    "environmental assessments",
-    "coastal engineering",
-    "land-use planning",
+    "environmental site assessments",
+    "coastal resilience",
+    "ecological restoration",
   ],
   navigation: {
     public: [
+      { label: "Home", href: "/" },
+      { label: "About", href: "/about" },
       { label: "Services", href: "/services" },
-      { label: "Projects", href: "/#projects" },
-      { label: "About", href: "/#approach" },
-      { label: "FAQ", href: "/#faq" },
+      { label: "Insights", href: "/blog" },
+      { label: "Contact", href: "/contact" },
     ],
     footerLegal: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
+      { label: "Privacy Policy", href: "/utility/privacy-policy" },
+      { label: "Terms & Conditions", href: "/utility/terms-conditions" },
+      { label: "Media Licensing", href: "/utility/license" },
     ],
   },
 };

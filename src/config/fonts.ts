@@ -1,14 +1,19 @@
-import { Fraunces, Source_Sans_3 } from "next/font/google";
+import { Fraunces, Source_Sans_3, Inter } from "next/font/google";
 
 /**
  * Typography system (see docs/DESIGN_SYSTEM.md).
  *
+ * - Alderline Primary Typeface: Inter (sans)
  * - Heading/display typeface: Fraunces (editorial serif)
- * - Body/UI typeface: Source Sans 3 (readable humanist sans)
- *
- * Fonts are self-hosted by next/font (no runtime requests to Google) and
- * exposed as CSS variables consumed by globals.css tokens.
+ * - Body/UI fallback: Source Sans 3 (humanist sans)
  */
+export const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
 export const headingFont = Fraunces({
   subsets: ["latin"],
   variable: "--font-heading",
@@ -22,4 +27,4 @@ export const bodyFont = Source_Sans_3({
   display: "swap",
 });
 
-export const fontVariables = `${headingFont.variable} ${bodyFont.variable}`;
+export const fontVariables = `${inter.variable} ${headingFont.variable} ${bodyFont.variable}`;

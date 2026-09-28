@@ -253,9 +253,9 @@ describe("Public identity resolver", () => {
   it("falls back to the static defaults when settings are absent", () => {
     const identity = resolvePublicIdentity(null);
 
-    expect(identity.name).toBe("IntegraVity");
+    expect(identity.name).toBe("Alderline Environmental");
     expect(identity.tagline).toBe(
-      "Environmental consulting, engineered with integrity",
+      "Environmental insight. Practical solutions.",
     );
     expect(identity.addressLines).toEqual([
       "14 Marshview Lane, Suite 300",
@@ -305,9 +305,9 @@ describe("Homepage section visibility & identity binding", () => {
 
     const { container } = render(await HomePage());
 
-    expect(container.querySelectorAll("section")).toHaveLength(8);
+    expect(container.querySelectorAll("section")).toHaveLength(6);
     expect(
-      screen.queryByRole("heading", { name: "Questions, answered" }),
+      screen.queryByRole("heading", { name: /questions/i }),
     ).toBeNull();
 
     // Identity flows to the hero headline and CTA pair.
@@ -325,15 +325,15 @@ describe("Homepage section visibility & identity binding", () => {
   it("renders all nine sections when Supabase is unconfigured", async () => {
     const { container } = render(await HomePage());
 
-    expect(container.querySelectorAll("section")).toHaveLength(9);
+    expect(container.querySelectorAll("section")).toHaveLength(7);
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: /Environmental consulting/,
+        name: /Environmental consulting/i,
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Questions, answered" }),
+      screen.getByRole("heading", { name: /questions/i }),
     ).toBeInTheDocument();
   });
 

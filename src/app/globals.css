@@ -1,15 +1,26 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "./ecolia.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-inter), var(--font-sans), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-heading: var(--font-heading);
+
+  /* Alderline Environmental Design Tokens */
+  --font-inter: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --color-canvas: #f6f2eb;
+  --color-forest: #15190d;
+  --color-sage: #dfe0d4;
+  --color-muted-text: #81837d;
+  --color-card-border: #e4e5d9;
+  --color-border-dark: #cac7c1;
+  --color-border-olive: #b3b3ac;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -209,4 +220,327 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Alderline Environmental Micro-Interactions & Animation Utilities
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+/* Custom Ecolia / Alderline Container */
+.ecolia-container {
+  width: 100%;
+  max-width: 1680px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+@media (max-width: 768px) {
+  .ecolia-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Rolling Text Animation */
+.roll-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: top;
+  line-height: inherit;
+}
+
+.roll-text-1 {
+  display: block;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.roll-text-2 {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  white-space: nowrap;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group:hover .roll-text-1,
+.hover-roll:hover .roll-text-1 {
+  transform: translateY(-100%);
+}
+
+.group:hover .roll-text-2,
+.hover-roll:hover .roll-text-2 {
+  transform: translateY(-100%);
+}
+
+/* Webflow Dual Text Roll Hover Effects */
+.nav-link-box,
+.button-link-box .button-box,
+.hero-text-box,
+.your-visionary-button,
+.dropdown-toggle-2 {
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+
+.nav-link-box .nav-menu-text-one,
+.button-link-box .button-text-one,
+.hero-text-box .hero-text-one,
+.your-visionary-button .your-visionary-top-countent-button-link-text.one,
+.dropdown-toggle-2 .pages-one {
+  display: block;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link-box .nav-menu-text-two,
+.button-link-box .button-text-two,
+.hero-text-box .hero-text-two,
+.your-visionary-button .your-visionary-top-countent-button-link-text.two,
+.dropdown-toggle-2 .pages-two {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  display: block;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link-box:hover .nav-menu-text-one,
+.button-link-box:hover .button-text-one,
+.hero-text-single-box:hover .hero-text-one,
+.your-visionary-top-countent-button-link:hover .your-visionary-top-countent-button-link-text.one,
+.dropdown-toggle-2:hover .pages-one {
+  transform: translateY(-100%);
+}
+
+.nav-link-box:hover .nav-menu-text-two,
+.button-link-box:hover .button-text-two,
+.hero-text-single-box:hover .hero-text-two,
+.your-visionary-top-countent-button-link:hover .your-visionary-top-countent-button-link-text.two,
+.dropdown-toggle-2:hover .pages-two {
+  transform: translateY(-100%);
+}
+
+/* Image Hover Zoom Effects */
+.home-blog-images,
+.tools-images,
+.home-about-images {
+  overflow: hidden;
+}
+
+.home-blog-images .home-blog-img,
+.tools-images .tools-img,
+.home-about-images .home-about-img {
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.home-blog-single-item:hover .home-blog-img,
+.home-blog-cl-item:hover .home-blog-img,
+.tools-images:hover .tools-img,
+.home-about-images:hover .home-about-img {
+  transform: scale(1.04);
+}
+
+/* Visionary Item Hover Elevation */
+.your-visionary-down-single-item {
+  transition: background-color 0.35s ease, border-color 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.your-visionary-down-single-item:hover {
+  background-color: rgba(21, 25, 13, 0.025);
+}
+
+.your-visionary-down-single-item:hover .your-visionary-icon-box {
+  transform: scale(1.08);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.your-visionary-icon-box {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Hero Pill Tag Micro-Interactions */
+.hero-text-single-box {
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease, background-color 0.25s ease;
+  cursor: pointer;
+}
+
+.hero-text-single-box:hover {
+  transform: translateY(-2px);
+  border-color: #15190d;
+}
+
+/* Accordion Smooth Transitions */
+.accordion-content {
+  overflow: hidden;
+  animation: accordionFadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes accordionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.accordion-header {
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.accordion-header:hover {
+  opacity: 0.85;
+}
+
+.accordion-icon img {
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
+}
+
+.accordion-item:hover .accordion-icon img {
+  transform: scale(1.1);
+}
+
+/* Mobile Navigation Menu Slide Motion */
+.nav-menu-with-btn.w--nav-menu-open {
+  animation: navMenuSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes navMenuSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* About Story Marquee */
+.about-story-marquee-track {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  width: max-content;
+  animation: marqueeScroll 22s linear infinite;
+  will-change: transform;
+}
+
+.about-story-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marqueeScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Gallery image hover zoom */
+.about-hero-gallery-banner-wrap {
+  overflow: hidden;
+}
+
+.about-hero-gallery-banner {
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.about-hero-gallery-banner-wrap:hover .about-hero-gallery-banner {
+  transform: scale(1.04);
+}
+
+/* Team member card hover */
+.about-team-card {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.about-team-card:hover {
+  transform: translateY(-4px);
+}
+
+.about-team-member-profile {
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.about-team-card:hover .about-team-member-profile {
+  transform: scale(1.04);
+}
+
+/* Service page card hover */
+.service-item {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+}
+
+.service-item:hover {
+  transform: translateY(-4px);
+}
+
+/* Blog listing card hover lift */
+.home-blog-single-item,
+.home-blog-cl-item {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.home-blog-single-item:hover,
+.home-blog-cl-item:hover {
+  transform: translateY(-3px);
+}
+
+/* Contact info item hover */
+.contact-info-item {
+  transition: transform 0.3s ease;
+}
+
+.contact-info-item:hover {
+  transform: translateX(4px);
+}
+
+/* Utility item hover */
+.utility-item {
+  transition: opacity 0.3s ease;
+}
+
+/* About Gallery Keyframe Entrance */
+[data-gallery-col] {
+  opacity: 0;
+  transform: translateY(80px);
+  will-change: transform, opacity;
+}
+
+[data-gallery-col].gallery-animate {
+  animation: gallerySlideUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+[data-gallery-col="1"].gallery-animate {
+  animation-delay: 0.2s;
+}
+
+@keyframes gallerySlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+main {
+  animation: pageFadeIn 0.4s ease-out;
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
