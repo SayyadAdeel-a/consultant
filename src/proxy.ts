@@ -58,7 +58,11 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const hasSessionCookie = request.cookies
     .getAll()
-    .some((c) => c.name.startsWith(SUPABASE_COOKIE_PREFIX));
+    .some(
+      (c) =>
+        c.name.startsWith(SUPABASE_COOKIE_PREFIX) ||
+        c.name === "alderline_admin_session",
+    );
 
   // UX fast-path only — real verification happens in requireAdmin().
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {

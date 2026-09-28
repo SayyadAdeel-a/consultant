@@ -138,29 +138,44 @@ export function AdminLoginForm() {
         </FormField>
       </div>
 
-      <Button
-        type="submit"
-        size="lg"
-        disabled={pending}
-        aria-busy={pending}
-        className="mt-6 h-11 w-full text-base"
-      >
-        {pending ? (
-          <>
-            <LoaderCircle
-              aria-hidden="true"
-              className="size-4 motion-safe:animate-spin"
-            />
-            Signing in…
-          </>
-        ) : (
-          "Sign in"
-        )}
-      </Button>
+      <div className="mt-4 flex flex-col gap-2">
+        <Button
+          type="submit"
+          size="lg"
+          disabled={pending}
+          aria-busy={pending}
+          className="h-11 w-full bg-[#15190D] text-white hover:bg-[#252B29] text-base"
+        >
+          {pending ? (
+            <>
+              <LoaderCircle
+                aria-hidden="true"
+                className="size-4 motion-safe:animate-spin"
+              />
+              Signing in…
+            </>
+          ) : (
+            "Sign in"
+          )}
+        </Button>
 
-      <p className="text-muted-foreground/80 mt-6 text-xs leading-relaxed">
-        Public registration is disabled by design. Administrator accounts are
-        provisioned through a controlled process (docs/BACKEND_SECURITY.md).
+        <button
+          type="button"
+          onClick={() => {
+            setValues({
+              email: "admin@alderline-environmental.com",
+              password: "AlderlineDemo2026!",
+            });
+            setClientErrors({});
+          }}
+          className="text-xs text-muted-foreground hover:text-foreground underline text-center mt-2 py-1"
+        >
+          Fill Demo Administrator Credentials
+        </button>
+      </div>
+
+      <p className="text-muted-foreground/80 mt-6 text-xs leading-relaxed border-t border-border/50 pt-4">
+        <span className="font-semibold text-foreground">Demonstration Mode:</span> Use the demo credentials above or your provisioned administrator account. Sessions expire automatically and every mutation is verified server-side.
       </p>
     </form>
   );

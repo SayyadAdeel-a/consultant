@@ -60,7 +60,7 @@ export async function generateMetadata({
   const description = cms
     ? (cms.metaDescription ?? cms.summary)
     : (fallback?.summary ??
-      "Ecological restoration, permitting, and assessment case studies from IntegraVity — illustrative project records.");
+      "Ecological restoration, permitting, and assessment case studies from Alderline Environmental — illustrative project records.");
 
   return createPageMetadata({
     title,

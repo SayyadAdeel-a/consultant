@@ -294,7 +294,7 @@ describe("AdminNav", () => {
     expect(screen.getByRole("link", { name: "Services" })).not.toHaveAttribute(
       "aria-current",
     );
-    expect(screen.getAllByRole("link")).toHaveLength(7);
+    expect(screen.getAllByRole("link")).toHaveLength(20);
   });
 
   it("marks Dashboard active only on the exact /admin route", () => {

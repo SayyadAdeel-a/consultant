@@ -6,11 +6,7 @@ import { TestimonialSection } from "@/components/ecolia/TestimonialSection";
 import { EcoliaAnimations } from "@/components/ecolia/Animations";
 import { serviceList } from "@/config/services";
 import { resolvePublicIdentity } from "@/lib/data/identity";
-import {
-  getPublishedServices,
-  getSiteSettings,
-  hydrateServiceDetail,
-} from "@/lib/data/public";
+import { getSiteSettings } from "@/lib/data/public";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({

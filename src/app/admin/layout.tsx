@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { logoutAdmin } from "@/app/actions/auth";
 import { AdminNav } from "@/components/admin";
@@ -44,33 +45,51 @@ export default async function AdminLayout({
   return (
     <div className="bg-muted/30 min-h-screen">
       <AdminConfigNotice />
-      <header className="border-border bg-background border-b">
+      <header className="border-border bg-background border-b sticky top-0 z-30">
         <div className="flex h-14 items-center justify-between gap-4 px-6">
-          <div className="flex items-baseline gap-2">
-            <span className="font-heading text-base font-semibold">
-              IntegraVity
-            </span>
-            <span className="text-muted-foreground text-xs">Admin console</span>
-          </div>
-          {admin ? (
-            <div className="flex items-center gap-4">
-              <span
-                className="text-muted-foreground max-w-48 truncate text-sm"
-                title={admin.email}
-              >
-                {admin.email}
+          <div className="flex items-center gap-3">
+            <Link href="/admin" className="flex items-baseline gap-2">
+              <span className="font-heading text-base font-semibold tracking-tight text-brand-forest">
+                Alderline
               </span>
-              <form action={logoutAdmin}>
-                <button
-                  type="submit"
-                  className={buttonVariants({ variant: "outline", size: "sm" })}
+              <span className="text-muted-foreground text-xs font-mono">CMS Console</span>
+            </Link>
+            <span className="hidden sm:inline-flex items-center rounded-full bg-brand-sage/30 px-2 py-0.5 text-[11px] font-medium text-brand-forest">
+              Demo Active
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-medium text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors px-2 py-1 rounded-md hover:bg-muted"
+            >
+              <span>View Live Website</span>
+              <span aria-hidden="true" className="text-[10px]">↗</span>
+            </Link>
+
+            {admin ? (
+              <div className="flex items-center gap-3 border-l border-border/60 pl-3">
+                <span
+                  className="text-muted-foreground max-w-48 truncate text-xs font-medium hidden md:inline"
+                  title={admin.email}
                 >
-                  <LogOut aria-hidden="true" className="size-3.5" />
-                  Sign out
-                </button>
-              </form>
-            </div>
-          ) : null}
+                  {admin.email}
+                </span>
+                <form action={logoutAdmin}>
+                  <button
+                    type="submit"
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                  >
+                    <LogOut aria-hidden="true" className="size-3.5" />
+                    Sign out
+                  </button>
+                </form>
+              </div>
+            ) : null}
+          </div>
         </div>
       </header>
       <div className="flex min-h-[calc(100vh-3.5rem)]">
