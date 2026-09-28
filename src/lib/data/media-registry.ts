@@ -1,0 +1,360 @@
+import type { MediaAssetView } from "@/types/cms";
+
+export interface RegisteredMediaItem {
+  id: string;
+  filename: string;
+  public_url: string;
+  category: "hero" | "about" | "team" | "services" | "insights" | "brand" | "icons" | "video";
+  title: string;
+  alt_text: string;
+  mime_type: string;
+  dimensions?: string;
+}
+
+export const ALDERLINE_MEDIA_REGISTRY: RegisteredMediaItem[] = [
+  // Hero Assets
+  {
+    id: "media-hero-poster",
+    filename: "hero-poster.jpg",
+    public_url: "/assets/alderline/hero/hero-poster.jpg",
+    category: "hero",
+    title: "Pacific Coast Estuary & Salt Marsh",
+    alt_text: "Aerial view of tidal estuarine wetlands with natural meandering channels",
+    mime_type: "image/jpeg",
+    dimensions: "1920 × 1080",
+  },
+  {
+    id: "media-hero-fallback",
+    filename: "hero-fallback.jpg",
+    public_url: "/assets/alderline/hero/hero-fallback.jpg",
+    category: "hero",
+    title: "Coastal Salt Marsh Horizon",
+    alt_text: "High-resolution coastal wetland landscape under soft daylight",
+    mime_type: "image/jpeg",
+    dimensions: "1920 × 1080",
+  },
+  {
+    id: "media-hero-video",
+    filename: "hero-ambient.mp4",
+    public_url: "/assets/alderline/videos/hero-ambient.mp4",
+    category: "video",
+    title: "Ambient Estuary Aerial (Looping Video)",
+    alt_text: "Looping ambient aerial video over tranquil coastal wetlands",
+    mime_type: "video/mp4",
+    dimensions: "1920 × 1080 (Video)",
+  },
+
+  // About & Gallery Assets
+  {
+    id: "media-about-gallery-1",
+    filename: "gallery-1.jpg",
+    public_url: "/assets/alderline/about/gallery-1.jpg",
+    category: "about",
+    title: "Canyon River Ecotone Survey",
+    alt_text: "Environmental survey team inspecting riparian corridor in canyon ecosystem",
+    mime_type: "image/jpeg",
+    dimensions: "1600 × 1200",
+  },
+  {
+    id: "media-about-gallery-2",
+    filename: "gallery-2.jpg",
+    public_url: "/assets/alderline/about/gallery-2.jpg",
+    category: "about",
+    title: "Coastal Fjord & Bridge Infrastructure",
+    alt_text: "Aerial perspective of coastal highway corridor crossing sensitive fjord ecology",
+    mime_type: "image/jpeg",
+    dimensions: "1600 × 1200",
+  },
+  {
+    id: "media-about-gallery-3",
+    filename: "gallery-3.jpg",
+    public_url: "/assets/alderline/about/gallery-3.jpg",
+    category: "about",
+    title: "Temperate Rainforest Canopy & Wetland",
+    alt_text: "Lush forested wetland canopy evaluated for Section 404 compliance",
+    mime_type: "image/jpeg",
+    dimensions: "1600 × 1200",
+  },
+  {
+    id: "media-about-gallery-4",
+    filename: "gallery-4.jpg",
+    public_url: "/assets/alderline/about/gallery-4.jpg",
+    category: "about",
+    title: "Braided River Estuary & Marsh Hydrology",
+    alt_text: "High-altitude aerial photography of dendritic tidal drainage network",
+    mime_type: "image/jpeg",
+    dimensions: "1600 × 1200",
+  },
+  {
+    id: "media-about-intro",
+    filename: "introduction.jpg",
+    public_url: "/assets/alderline/about/introduction.jpg",
+    category: "about",
+    title: "Field Scientist Environmental Delineation",
+    alt_text: "Ecologist recording hydric soil parameters in wetland field notebook",
+    mime_type: "image/jpeg",
+    dimensions: "1200 × 800",
+  },
+  {
+    id: "media-about-video",
+    filename: "about-ambient.mp4",
+    public_url: "/assets/alderline/videos/about-ambient.mp4",
+    category: "video",
+    title: "Coastal Wetlands Flight (Ambient Video)",
+    alt_text: "Aerial sweeping video of pristine coastal estuary ecosystems",
+    mime_type: "video/mp4",
+    dimensions: "1920 × 1080 (Video)",
+  },
+
+  // Team Portraits
+  {
+    id: "media-team-1",
+    filename: "member-1.jpg",
+    public_url: "/assets/alderline/team/member-1.jpg",
+    category: "team",
+    title: "Dr. Evelyn Reed, PWS",
+    alt_text: "Portrait of Dr. Evelyn Reed, Principal Ecological Consultant",
+    mime_type: "image/jpeg",
+    dimensions: "800 × 800",
+  },
+  {
+    id: "media-team-2",
+    filename: "member-2.jpg",
+    public_url: "/assets/alderline/team/member-2.jpg",
+    category: "team",
+    title: "Marcus Vance, PE",
+    alt_text: "Portrait of Marcus Vance, Senior Environmental Review Specialist",
+    mime_type: "image/jpeg",
+    dimensions: "800 × 800",
+  },
+  {
+    id: "media-team-3",
+    filename: "member-3.jpg",
+    public_url: "/assets/alderline/team/member-3.jpg",
+    category: "team",
+    title: "Dr. Sarah Lin, CPSS",
+    alt_text: "Portrait of Dr. Sarah Lin, Lead Hydrologist & Soil Scientist",
+    mime_type: "image/jpeg",
+    dimensions: "800 × 800",
+  },
+  {
+    id: "media-team-4",
+    filename: "member-4.jpg",
+    public_url: "/assets/alderline/team/member-4.jpg",
+    category: "team",
+    title: "David Campbell, AICP",
+    alt_text: "Portrait of David Campbell, Principal Land Planning Consultant",
+    mime_type: "image/jpeg",
+    dimensions: "800 × 800",
+  },
+  {
+    id: "media-team-5",
+    filename: "member-5.jpg",
+    public_url: "/assets/alderline/team/member-5.jpg",
+    category: "team",
+    title: "Elena Rostova, CERP",
+    alt_text: "Portrait of Elena Rostova, Restoration Strategy Advisor",
+    mime_type: "image/jpeg",
+    dimensions: "800 × 800",
+  },
+
+  // Client Avatars
+  {
+    id: "media-avatar-1",
+    filename: "avatar-1.jpg",
+    public_url: "/assets/alderline/about/avatar-1.jpg",
+    category: "about",
+    title: "Arthur Pendelton (Client)",
+    alt_text: "Client portrait of Arthur Pendelton, VP of Infrastructure Planning",
+    mime_type: "image/jpeg",
+    dimensions: "400 × 400",
+  },
+  {
+    id: "media-avatar-2",
+    filename: "avatar-2.jpg",
+    public_url: "/assets/alderline/about/avatar-2.jpg",
+    category: "about",
+    title: "Sarah Jenkins, PE (Client)",
+    alt_text: "Client portrait of Sarah Jenkins, Director of Capital Projects",
+    mime_type: "image/jpeg",
+    dimensions: "400 × 400",
+  },
+  {
+    id: "media-avatar-3",
+    filename: "avatar-3.jpg",
+    public_url: "/assets/alderline/about/avatar-3.jpg",
+    category: "about",
+    title: "Robert K. Vance (Client)",
+    alt_text: "Client portrait of Robert K. Vance, Chief Development Officer",
+    mime_type: "image/jpeg",
+    dimensions: "400 × 400",
+  },
+
+  // Services Imagery
+  {
+    id: "media-services-coastal",
+    filename: "coastal-resilience.jpg",
+    public_url: "/assets/alderline/services/coastal-resilience.jpg",
+    category: "services",
+    title: "Coastal Wetland Restoration Project Site",
+    alt_text: "Restored tidal marsh with native vegetation and stabilized riprap shoreline",
+    mime_type: "image/jpeg",
+    dimensions: "1600 × 900",
+  },
+  {
+    id: "media-services-site-assessment",
+    filename: "site-assessment.jpg",
+    public_url: "/assets/alderline/services/site-assessment.jpg",
+    category: "services",
+    title: "Environmental Field Scientists & Drill Rig",
+    alt_text: "Two environmental consultants in hi-vis gear conducting Phase II ESA soil sampling",
+    mime_type: "image/jpeg",
+    dimensions: "1600 × 900",
+  },
+  {
+    id: "media-services-video",
+    filename: "services-ambient.mp4",
+    public_url: "/assets/alderline/videos/services-ambient.mp4",
+    category: "video",
+    title: "Coastal Estuary Aerial (Services Ambient)",
+    alt_text: "Ambient aerial drone footage across tranquil coastal wetland shoreline",
+    mime_type: "video/mp4",
+    dimensions: "1920 × 1080 (Video)",
+  },
+
+  // Insights / Blog Imagery
+  {
+    id: "media-insight-1",
+    filename: "article-1.jpg",
+    public_url: "/assets/alderline/insights/article-1.jpg",
+    category: "insights",
+    title: "Navigating Clean Water Act Rule Changes",
+    alt_text: "Field assessment along regulated stream channel",
+    mime_type: "image/jpeg",
+    dimensions: "1200 × 750",
+  },
+  {
+    id: "media-insight-2",
+    filename: "article-2.jpg",
+    public_url: "/assets/alderline/insights/article-2.jpg",
+    category: "insights",
+    title: "ASTM E1527-21 Standard Practice Guide",
+    alt_text: "Phase I ESA historical records and aerial map review",
+    mime_type: "image/jpeg",
+    dimensions: "1200 × 750",
+  },
+  {
+    id: "media-insight-3",
+    filename: "article-3.jpg",
+    public_url: "/assets/alderline/insights/article-3.jpg",
+    category: "insights",
+    title: "Compensatory Mitigation Banking Strategies",
+    alt_text: "Engineered wetland basin and native sedge planting",
+    mime_type: "image/jpeg",
+    dimensions: "1200 × 750",
+  },
+  {
+    id: "media-insight-4",
+    filename: "article-4.jpg",
+    public_url: "/assets/alderline/insights/article-4.jpg",
+    category: "insights",
+    title: "Linear Infrastructure Environmental Reviews",
+    alt_text: "Transmission line right-of-way crossing wetland buffer",
+    mime_type: "image/jpeg",
+    dimensions: "1200 × 750",
+  },
+  {
+    id: "media-insight-hero",
+    filename: "article-hero.jpg",
+    public_url: "/assets/alderline/insights/article-hero.jpg",
+    category: "insights",
+    title: "Environmental Insights Editorial Hero",
+    alt_text: "High-resolution wetlands and watershed landscape banner",
+    mime_type: "image/jpeg",
+    dimensions: "1600 × 900",
+  },
+
+  // Brand Marks & Logos
+  {
+    id: "media-brand-logo-dark",
+    filename: "logo-dark.svg",
+    public_url: "/assets/alderline/brand/logo-dark.svg",
+    category: "brand",
+    title: "Alderline Environmental Primary Logo (Dark)",
+    alt_text: "Alderline Environmental tree leaf emblem and wordmark in forest green",
+    mime_type: "image/svg+xml",
+    dimensions: "Vector SVG",
+  },
+  {
+    id: "media-brand-logo-light",
+    filename: "logo-light.svg",
+    public_url: "/assets/alderline/brand/logo-light.svg",
+    category: "brand",
+    title: "Alderline Environmental Primary Logo (Light)",
+    alt_text: "Alderline Environmental tree leaf emblem and wordmark in warm sand",
+    mime_type: "image/svg+xml",
+    dimensions: "Vector SVG",
+  },
+  {
+    id: "media-sector-mark-1",
+    filename: "sector-mark-1.jpg",
+    public_url: "/assets/alderline/brand/sector-mark-1.jpg",
+    category: "brand",
+    title: "Clean Infrastructure Practice Sector Mark",
+    alt_text: "Architectural sector emblem for clean infrastructure",
+    mime_type: "image/jpeg",
+    dimensions: "400 × 400",
+  },
+  {
+    id: "media-sector-mark-2",
+    filename: "sector-mark-2.jpg",
+    public_url: "/assets/alderline/brand/sector-mark-2.jpg",
+    category: "brand",
+    title: "Renewable Energy Corridor Practice Sector Mark",
+    alt_text: "Emblem for renewable energy transmission corridors",
+    mime_type: "image/jpeg",
+    dimensions: "400 × 400",
+  },
+  {
+    id: "media-sector-mark-3",
+    filename: "sector-mark-3.jpg",
+    public_url: "/assets/alderline/brand/sector-mark-3.jpg",
+    category: "brand",
+    title: "Industrial & Brownfield Due Diligence Mark",
+    alt_text: "Emblem for commercial and industrial site assessment",
+    mime_type: "image/jpeg",
+    dimensions: "400 × 400",
+  },
+  {
+    id: "media-sector-mark-4",
+    filename: "sector-mark-4.jpg",
+    public_url: "/assets/alderline/brand/sector-mark-4.jpg",
+    category: "brand",
+    title: "Coastal Resilience & Mitigation Mark",
+    alt_text: "Emblem for coastal resilience and wetland restoration",
+    mime_type: "image/jpeg",
+    dimensions: "400 × 400",
+  },
+];
+
+/** Converts a registered demonstration media item into the CMS MediaAssetView shape */
+export function registryItemToAssetView(item: RegisteredMediaItem): MediaAssetView {
+  return {
+    id: item.id,
+    filename: item.filename,
+    file_path: item.public_url,
+    storage_bucket: "static",
+    mime_type: item.mime_type,
+    file_size: 150000,
+    alt_text: item.alt_text,
+    caption: item.title,
+    created_at: "2026-09-28T12:00:00.000Z",
+    public_url: item.public_url,
+  };
+}
+
+/** Returns registered assets optionally filtered by category */
+export function getRegisteredMedia(category?: RegisteredMediaItem["category"]): RegisteredMediaItem[] {
+  if (!category) return ALDERLINE_MEDIA_REGISTRY;
+  return ALDERLINE_MEDIA_REGISTRY.filter((m) => m.category === category);
+}

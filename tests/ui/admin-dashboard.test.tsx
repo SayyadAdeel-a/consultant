@@ -282,7 +282,7 @@ describe("AdminNav", () => {
 
     render(<AdminNav />);
 
-    const active = screen.getByRole("link", { name: "Inquiries" });
+    const active = screen.getByRole("link", { name: /messages/i });
     expect(active).toHaveAttribute("aria-current", "page");
     expect(active).toHaveClass("bg-brand-sage/40");
     expect(active).toHaveAttribute("href", "/admin/inquiries");
@@ -291,10 +291,10 @@ describe("AdminNav", () => {
     expect(screen.getByRole("link", { name: "Dashboard" })).not.toHaveAttribute(
       "aria-current",
     );
-    expect(screen.getByRole("link", { name: "Services" })).not.toHaveAttribute(
+    expect(screen.getByRole("link", { name: /settings/i })).not.toHaveAttribute(
       "aria-current",
     );
-    expect(screen.getAllByRole("link")).toHaveLength(20);
+    expect(screen.getAllByRole("link")).toHaveLength(6);
   });
 
   it("marks Dashboard active only on the exact /admin route", () => {
@@ -305,7 +305,7 @@ describe("AdminNav", () => {
     const dashboard = screen.getByRole("link", { name: "Dashboard" });
     expect(dashboard).toHaveAttribute("aria-current", "page");
     expect(dashboard).toHaveClass("bg-brand-sage/40");
-    expect(screen.getByRole("link", { name: "Settings" })).not.toHaveAttribute(
+    expect(screen.getByRole("link", { name: /settings/i })).not.toHaveAttribute(
       "aria-current",
     );
   });

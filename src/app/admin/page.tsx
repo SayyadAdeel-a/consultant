@@ -209,53 +209,215 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <p className="text-eyebrow text-muted-foreground">Admin console</p>
-      <h1 className="font-heading mt-2 text-2xl font-semibold">Dashboard</h1>
-      <p className="text-muted-foreground mt-1 text-sm">
-        Live overview of inquiries, services, case studies, and media.
-      </p>
-
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {metrics.map((metric) => (
+    <div className="mx-auto max-w-6xl space-y-8">
+      {/* ─────────────────────────────────────────────────────────────
+          1. Hero Greeting & Primary Prompt
+          ───────────────────────────────────────────────────────────── */}
+      <div>
+        <p className="text-eyebrow text-muted-foreground">Admin console</p>
+        <h1 className="font-heading mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          Dashboard
+        </h1>
+        <div className="mt-4 p-6 rounded-2xl bg-brand-sage/20 border border-brand-sage flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-brand-forest tracking-tight">
+              What would you like to change today?
+            </h2>
+            <p className="text-xs sm:text-sm text-brand-forest/80 mt-1 max-w-xl leading-relaxed">
+              Choose any page or collection below to edit headlines, update photos, or review client messages.
+            </p>
+          </div>
           <Link
-            key={metric.label}
-            href={metric.href}
-            className="border-border bg-card group hover:border-brand-sage/70 rounded-xl border p-5 transition-colors"
+            href="/admin/content"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#15190d] text-[#f6f2eb] text-xs font-semibold shadow-xs hover:bg-[#252b29] transition-colors shrink-0"
           >
-            <p className="text-muted-foreground text-sm font-medium">
-              {metric.label}
-            </p>
-            <p className="font-heading mt-2 text-3xl font-semibold">
-              {metric.value}
-            </p>
-            <p className="text-muted-foreground/80 mt-1 text-xs">
-              {metric.detail}
-            </p>
-            <span className="text-brand-forest mt-4 block text-xs font-semibold underline-offset-4 group-hover:underline">
-              Manage →
-            </span>
+            <span>Open Visual Editor &rarr;</span>
           </Link>
-        ))}
+        </div>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+      {/* ─────────────────────────────────────────────────────────────
+          2. Common Task Visual Action Cards (The Core UX)
+          ───────────────────────────────────────────────────────────── */}
+      <section aria-label="Common website editing tasks">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {/* Card 1: Edit Homepage */}
+          <Link
+            href="/admin/content"
+            className="group flex flex-col rounded-2xl border border-border bg-card p-5 shadow-xs hover:border-brand-forest/60 hover:shadow-md transition-all duration-300"
+          >
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <span className="p-2 rounded-xl bg-brand-sage/40 text-brand-forest">
+                <span className="text-lg">🏡</span>
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-brand-sage/30 text-brand-forest">
+                Visual Editor
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-foreground group-hover:text-brand-forest transition-colors">
+              Edit Homepage
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed flex-1">
+              Change hero headlines, intro text, and toggle sections shown on your main landing page.
+            </p>
+            <span className="mt-4 pt-3 border-t border-border/60 text-xs font-semibold text-brand-forest flex items-center justify-between">
+              <span>Start editing</span>
+              <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </span>
+          </Link>
+
+          {/* Card 2: Photos & Videos */}
+          <Link
+            href="/admin/media"
+            className="group flex flex-col rounded-2xl border border-border bg-card p-5 shadow-xs hover:border-brand-forest/60 hover:shadow-md transition-all duration-300"
+          >
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <span className="p-2 rounded-xl bg-brand-sage/40 text-brand-forest">
+                <span className="text-lg">📸</span>
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+                Media Library
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-foreground group-hover:text-brand-forest transition-colors">
+              Photos &amp; Videos
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed flex-1">
+              Browse 50+ existing field photos, drone footage, and upload new high-resolution imagery.
+            </p>
+            <span className="mt-4 pt-3 border-t border-border/60 text-xs font-semibold text-brand-forest flex items-center justify-between">
+              <span>Browse assets</span>
+              <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </span>
+          </Link>
+
+          {/* Card 3: Consulting Services */}
+          <Link
+            href="/admin/services"
+            className="group flex flex-col rounded-2xl border border-border bg-card p-5 shadow-xs hover:border-brand-forest/60 hover:shadow-md transition-all duration-300"
+          >
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <span className="p-2 rounded-xl bg-brand-sage/40 text-brand-forest">
+                <span className="text-lg">🌿</span>
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+                Practice Areas
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-foreground group-hover:text-brand-forest transition-colors">
+              Consulting Services
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed flex-1">
+              Edit the 4 core disciplines: wetland delineation, permitting, site assessment, and restoration.
+            </p>
+            <span className="mt-4 pt-3 border-t border-border/60 text-xs font-semibold text-brand-forest flex items-center justify-between">
+              <span>View disciplines</span>
+              <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </span>
+          </Link>
+
+          {/* Card 4: Edit About Page */}
+          <Link
+            href="/admin/about"
+            className="group flex flex-col rounded-2xl border border-border bg-card p-5 shadow-xs hover:border-brand-forest/60 hover:shadow-md transition-all duration-300"
+          >
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <span className="p-2 rounded-xl bg-brand-sage/40 text-brand-forest">
+                <span className="text-lg">ℹ️</span>
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+                Company Story
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-foreground group-hover:text-brand-forest transition-colors">
+              Edit About Page
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed flex-1">
+              Update firm mission, the 4-photo aerial gallery, and your core environmental principles.
+            </p>
+            <span className="mt-4 pt-3 border-t border-border/60 text-xs font-semibold text-brand-forest flex items-center justify-between">
+              <span>Edit narrative</span>
+              <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </span>
+          </Link>
+
+          {/* Card 5: Team Profiles */}
+          <Link
+            href="/admin/team"
+            className="group flex flex-col rounded-2xl border border-border bg-card p-5 shadow-xs hover:border-brand-forest/60 hover:shadow-md transition-all duration-300"
+          >
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <span className="p-2 rounded-xl bg-brand-sage/40 text-brand-forest">
+                <span className="text-lg">👥</span>
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground">
+                Leadership
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-foreground group-hover:text-brand-forest transition-colors">
+              Team Profiles
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed flex-1">
+              Add or edit certified scientists, hydrologists, and PE leadership profiles with portraits.
+            </p>
+            <span className="mt-4 pt-3 border-t border-border/60 text-xs font-semibold text-brand-forest flex items-center justify-between">
+              <span>View team</span>
+              <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </span>
+          </Link>
+
+          {/* Card 6: Read Messages */}
+          <Link
+            href="/admin/inquiries"
+            className="group flex flex-col rounded-2xl border border-border bg-card p-5 shadow-xs hover:border-brand-forest/60 hover:shadow-md transition-all duration-300"
+          >
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <span className="p-2 rounded-xl bg-brand-sage/40 text-brand-forest">
+                <span className="text-lg">📬</span>
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                Live Intake
+              </span>
+            </div>
+            <h3 className="text-base font-bold text-foreground group-hover:text-brand-forest transition-colors">
+              Read Client Messages
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed flex-1">
+              Review new project scoping requests submitted through your website&apos;s contact form.
+            </p>
+            <span className="mt-4 pt-3 border-t border-border/60 text-xs font-semibold text-brand-forest flex items-center justify-between">
+              <span>View inbox</span>
+              <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </span>
+          </Link>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          3. Activity & Quick Actions (Inquiries + Fast Links)
+          ───────────────────────────────────────────────────────────── */}
+      <div className="grid gap-6 lg:grid-cols-3">
         <section
           aria-labelledby="recent-inquiries-heading"
-          className="border-border bg-card rounded-xl border p-6 lg:col-span-2"
+          className="border-border bg-card rounded-2xl border p-6 lg:col-span-2 shadow-xs"
         >
-          <div className="flex items-center justify-between gap-4">
-            <h2
-              id="recent-inquiries-heading"
-              className="font-heading text-lg font-semibold"
-            >
-              Recent inquiries
-            </h2>
+          <div className="flex items-center justify-between gap-4 border-b border-border pb-3">
+            <div>
+              <h2
+                id="recent-inquiries-heading"
+                className="font-heading text-lg font-semibold text-foreground"
+              >
+                Recent inquiries
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Prospective client submissions awaiting review.
+              </p>
+            </div>
             <Link
               href="/admin/inquiries"
-              className="text-foreground hover:text-brand-forest text-sm font-medium underline-offset-4 hover:underline"
+              className="text-foreground hover:text-brand-forest text-xs font-semibold underline-offset-4 hover:underline"
             >
-              View all
+              View all &rarr;
             </Link>
           </div>
 
@@ -272,8 +434,8 @@ export default async function AdminDashboardPage() {
                   className="flex items-center justify-between gap-4 py-3"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{item.name}</p>
-                    <p className="text-muted-foreground truncate text-xs">
+                    <p className="truncate text-sm font-semibold text-foreground">{item.name}</p>
+                    <p className="text-muted-foreground truncate text-xs mt-0.5">
                       {[item.company ?? "", inquiryTypeLabel(item.inquiry_type)]
                         .filter(Boolean)
                         .join(" · ")}
@@ -282,7 +444,7 @@ export default async function AdminDashboardPage() {
                   <div className="flex shrink-0 items-center gap-3">
                     <time
                       dateTime={item.created_at}
-                      className="text-muted-foreground text-xs"
+                      className="text-muted-foreground text-xs font-mono"
                     >
                       {formatDate(item.created_at)}
                     </time>
@@ -294,39 +456,85 @@ export default async function AdminDashboardPage() {
           )}
         </section>
 
-        <aside className="border-border bg-card rounded-xl border p-6">
-          <h2 className="font-heading text-lg font-semibold">Quick actions</h2>
-          <div className="mt-4 flex flex-col gap-3">
-            <Link
-              href="/admin/services"
-              className={buttonVariants({
-                variant: "default",
-                className: "w-full justify-start",
-              })}
-            >
-              Add Service
-            </Link>
-            <Link
-              href="/admin/inquiries"
-              className={buttonVariants({
-                variant: "outline",
-                className: "w-full justify-start",
-              })}
-            >
-              Review Inquiries
-            </Link>
-            <Link
-              href="/admin/settings"
-              className={buttonVariants({
-                variant: "outline",
-                className: "w-full justify-start",
-              })}
-            >
-              Edit Settings
-            </Link>
+        <aside className="border-border bg-card rounded-2xl border p-6 shadow-xs flex flex-col justify-between">
+          <div>
+            <h2 className="font-heading text-lg font-semibold text-foreground">
+              Quick actions
+            </h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Direct shortcuts for common administrative updates.
+            </p>
+            <div className="mt-4 flex flex-col gap-2.5">
+              <Link
+                href="/admin/services"
+                className={buttonVariants({
+                  variant: "default",
+                  className: "w-full justify-start",
+                })}
+              >
+                Add Service
+              </Link>
+              <Link
+                href="/admin/inquiries"
+                className={buttonVariants({
+                  variant: "outline",
+                  className: "w-full justify-start",
+                })}
+              >
+                Review Inquiries
+              </Link>
+              <Link
+                href="/admin/settings"
+                className={buttonVariants({
+                  variant: "outline",
+                  className: "w-full justify-start",
+                })}
+              >
+                Edit Settings
+              </Link>
+            </div>
+          </div>
+          <div className="mt-6 pt-4 border-t border-border">
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Need to customize logos or contact numbers? Use <Link href="/admin/settings" className="font-semibold text-brand-forest hover:underline">Settings</Link>.
+            </p>
           </div>
         </aside>
       </div>
+
+      {/* ─────────────────────────────────────────────────────────────
+          4. Website Overview & Metric Summary (Clean, Secondary Placement)
+          ───────────────────────────────────────────────────────────── */}
+      <section aria-label="Website Overview Metrics" className="pt-2">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <h2 className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+            Website Overview &amp; Records
+          </h2>
+          <span className="text-xs text-muted-foreground">4 core collections</span>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {metrics.map((metric) => (
+            <Link
+              key={metric.label}
+              href={metric.href}
+              className="border-border bg-card group hover:border-brand-sage/70 rounded-xl border p-4 transition-colors shadow-xs"
+            >
+              <p className="text-muted-foreground text-xs font-medium">
+                {metric.label}
+              </p>
+              <p className="font-heading mt-1.5 text-2xl font-bold text-foreground">
+                {metric.value}
+              </p>
+              <p className="text-muted-foreground/80 mt-0.5 text-[11px]">
+                {metric.detail}
+              </p>
+              <span className="text-brand-forest mt-3 block text-xs font-semibold underline-offset-4 group-hover:underline">
+                Manage →
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

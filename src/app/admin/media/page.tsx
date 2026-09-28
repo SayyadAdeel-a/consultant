@@ -58,6 +58,13 @@ export default async function AdminMediaPage() {
         .getPublicUrl(asset.file_path);
       return { ...asset, public_url: publicUrl };
     });
+
+    if (assets.length === 0) {
+      const { ALDERLINE_MEDIA_REGISTRY, registryItemToAssetView } = await import(
+        "@/lib/data/media-registry"
+      );
+      assets = ALDERLINE_MEDIA_REGISTRY.map(registryItemToAssetView);
+    }
   } catch (error) {
     console.error("[admin] media assets query failed:", error);
     loadError = true;

@@ -145,16 +145,22 @@ beforeEach(() => {
 });
 
 describe("admin content page", () => {
-  it("gates access and renders the section table from mocked rows", async () => {
+  it("gates access, renders the visual homepage editor, and supports table view", async () => {
+    const user = userEvent.setup({ delay: null });
     render(await AdminContentPage());
 
     expect(vi.mocked(requireAdmin)).toHaveBeenCalledTimes(1);
     expect(
       screen.getByRole("heading", { level: 1, name: "Homepage content" }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/3 homepage sections/)).toBeInTheDocument();
+    expect(screen.getByText("Visual Editor")).toBeInTheDocument();
+    expect(screen.getByText("Table View")).toBeInTheDocument();
+    expect(screen.getByText("Live Visual Preview (Click any section to edit)")).toBeInTheDocument();
 
-    // Section key codes, headlines, visibility pills, and display order.
+    // Switch to table view to inspect database records
+    await user.click(screen.getByRole("button", { name: /Table View/i }));
+
+    expect(screen.getByText(/3 homepage sections/)).toBeInTheDocument();
     expect(screen.getByText("hero")).toBeInTheDocument();
     expect(screen.getByText("credibility")).toBeInTheDocument();
     expect(screen.getByText("faq")).toBeInTheDocument();
@@ -172,7 +178,7 @@ describe("admin content page", () => {
       .getByText("Proof in the field")
       .closest("tr") as HTMLElement;
     expect(within(row2).getByText("Hidden")).toBeInTheDocument();
-    expect(within(row2).getByText("—")).toBeInTheDocument(); // null subtitle
+    expect(within(row2).getByText("—")).toBeInTheDocument();
     expect(within(row2).getByText("2")).toBeInTheDocument();
   });
 
