@@ -25,7 +25,7 @@ export default async function AdminContactInfoPage() {
   let email = "inquiries@alderline-env.com";
   let phone = "+1 (555) 382-4190";
   let address = "1420 Harborview Boulevard, Suite 800, Seattle, WA 98101";
-  let hours = "Monday – Friday: 8:00 AM – 5:30 PM PST";
+  const hours = "Monday – Friday: 8:00 AM – 5:30 PM PST";
   const responseGuarantee = "Guaranteed consultation callback within 1 business day";
 
   try {

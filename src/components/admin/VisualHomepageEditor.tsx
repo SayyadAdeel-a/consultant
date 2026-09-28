@@ -9,15 +9,10 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
-  Image as ImageIcon,
-  Layers,
   Monitor,
-  RotateCcw,
   Save,
   Smartphone,
   Sparkles,
-  Table as TableIcon,
-  Video,
 } from "lucide-react";
 import { toggleSectionVisibility, updateHomepageSection } from "@/app/actions/content";
 import { MediaPickerModal } from "./MediaPickerModal";

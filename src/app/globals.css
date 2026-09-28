@@ -566,6 +566,22 @@ main {
   text-transform: none;
 }
 
+.admin-area button {
+  color: inherit;
+}
+
+@media (max-width: 1023px) {
+  .admin-area aside.admin-desktop-sidebar {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-area aside.admin-desktop-sidebar {
+    display: block !important;
+  }
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
  * About page marquee animation
  * ───────────────────────────────────────────────────────────────────────────── */

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Eye, LayoutTemplate, Table } from "lucide-react";
+import { LayoutTemplate, Table } from "lucide-react";
 import { VisualHomepageEditor } from "./VisualHomepageEditor";
 import { ContentSectionsTable } from "./ContentSectionsTable";
 import type { HomepageSectionRecord } from "@/types/cms";

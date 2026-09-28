@@ -7,7 +7,6 @@ import {
   BarChart3,
   Briefcase,
   ChevronDown,
-  Compass,
   FileText,
   FolderKanban,
   Globe,
@@ -20,12 +19,8 @@ import {
   Layers,
   LayoutDashboard,
   MessageSquareQuote,
-  PanelBottom,
   PhoneCall,
-  Search,
   Settings,
-  ShieldCheck,
-  Tags,
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

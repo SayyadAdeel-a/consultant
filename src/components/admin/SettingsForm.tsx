@@ -5,7 +5,6 @@ import { updateSiteSettings } from "@/app/actions/settings";
 import { FormField } from "@/components/forms/FormField";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import type { SiteSettingsRecord } from "@/types/cms";
 import type { SiteSettingsInput } from "@/lib/validations/settings";
@@ -109,14 +108,19 @@ export function SettingsForm({
 
       <section
         aria-labelledby="settings-identity-heading"
-        className="space-y-4"
+        className="rounded-xl border border-border bg-card p-5 shadow-xs space-y-4"
       >
-        <h2
-          id="settings-identity-heading"
-          className="font-heading text-lg font-semibold"
-        >
-          Company identity
-        </h2>
+        <div>
+          <h2
+            id="settings-identity-heading"
+            className="font-heading text-base font-semibold text-foreground"
+          >
+            Company identity
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Official company name, tagline, and brand description rendered across headers and metadata.
+          </p>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             id="settings-company-name"
@@ -169,15 +173,21 @@ export function SettingsForm({
         </FormField>
       </section>
 
-      <Separator />
-
-      <section aria-labelledby="settings-contact-heading" className="space-y-4">
-        <h2
-          id="settings-contact-heading"
-          className="font-heading text-lg font-semibold"
-        >
-          Contact details
-        </h2>
+      <section
+        aria-labelledby="settings-contact-heading"
+        className="rounded-xl border border-border bg-card p-5 shadow-xs space-y-4"
+      >
+        <div>
+          <h2
+            id="settings-contact-heading"
+            className="font-heading text-base font-semibold text-foreground"
+          >
+            Contact details
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Direct email, phone, and office address shown in headers, footers, and consultation forms.
+          </p>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             id="settings-contact-email"
@@ -236,15 +246,21 @@ export function SettingsForm({
         </FormField>
       </section>
 
-      <Separator />
-
-      <section aria-labelledby="settings-social-heading" className="space-y-4">
-        <h2
-          id="settings-social-heading"
-          className="font-heading text-lg font-semibold"
-        >
-          Social links
-        </h2>
+      <section
+        aria-labelledby="settings-social-heading"
+        className="rounded-xl border border-border bg-card p-5 shadow-xs space-y-4"
+      >
+        <div>
+          <h2
+            id="settings-social-heading"
+            className="font-heading text-base font-semibold text-foreground"
+          >
+            Social links
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Corporate profiles linked in the website footer.
+          </p>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             id="settings-linkedin"
@@ -283,15 +299,21 @@ export function SettingsForm({
         </div>
       </section>
 
-      <Separator />
-
-      <section aria-labelledby="settings-cta-heading" className="space-y-4">
-        <h2
-          id="settings-cta-heading"
-          className="font-heading text-lg font-semibold"
-        >
-          Calls to action
-        </h2>
+      <section
+        aria-labelledby="settings-cta-heading"
+        className="rounded-xl border border-border bg-card p-5 shadow-xs space-y-4"
+      >
+        <div>
+          <h2
+            id="settings-cta-heading"
+            className="font-heading text-base font-semibold text-foreground"
+          >
+            Calls to action
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Primary and secondary action buttons configured across the global header and heroes.
+          </p>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             id="settings-primary-cta-label"

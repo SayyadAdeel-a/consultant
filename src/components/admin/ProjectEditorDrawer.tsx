@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { ProjectRecord, ServiceOption } from "@/types/cms";
 import type { ProjectInput } from "@/lib/validations/projects";
+import { Image as ImageIcon } from "lucide-react";
 import { AdminDrawer } from "./AdminDrawer";
+import { MediaPickerModal } from "./MediaPickerModal";
 
 type Notice = { kind: "error" | "success"; text: string };
 
@@ -47,6 +49,7 @@ export function ProjectEditorDrawer({
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState<Notice | null>(null);
   const [pending, setPending] = useState(false);
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
   function update<K extends keyof typeof form>(
     key: K,
@@ -324,21 +327,59 @@ export function ProjectEditorDrawer({
           label="Featured image URL"
           error={fieldErrors.featured_image_url}
         >
-          <Input
-            id="project-featured-image"
-            type="url"
-            value={form.featured_image_url}
-            onChange={(event) =>
-              update("featured_image_url", event.target.value)
-            }
-            aria-invalid={fieldErrors.featured_image_url ? true : undefined}
-            aria-describedby={
-              fieldErrors.featured_image_url
-                ? "project-featured-image-error"
-                : undefined
-            }
-            placeholder="https://… or /images/…"
-          />
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <Input
+                id="project-featured-image"
+                type="url"
+                value={form.featured_image_url}
+                onChange={(event) =>
+                  update("featured_image_url", event.target.value)
+                }
+                aria-invalid={fieldErrors.featured_image_url ? true : undefined}
+                aria-describedby={
+                  fieldErrors.featured_image_url
+                    ? "project-featured-image-error"
+                    : undefined
+                }
+                placeholder="https://… or /assets/…"
+                className="flex-1"
+              />
+              <button
+                type="button"
+                onClick={() => setIsMediaPickerOpen(true)}
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-muted/60 px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+              >
+                <ImageIcon className="size-3.5 text-muted-foreground" />
+                <span>Library</span>
+              </button>
+            </div>
+            {form.featured_image_url ? (
+              <div className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/20 p-2">
+                <div className="relative h-12 w-20 overflow-hidden rounded-md border border-border bg-muted shrink-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={form.featured_image_url}
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs font-medium text-foreground">
+                    {form.featured_image_url.split("/").pop()}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">Current project banner</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => update("featured_image_url", "")}
+                  className="text-xs text-muted-foreground hover:text-destructive transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
+            ) : null}
+          </div>
         </FormField>
 
         <div className="flex flex-wrap items-center gap-6">
@@ -379,6 +420,16 @@ export function ProjectEditorDrawer({
           </button>
         </div>
       </form>
+
+      <MediaPickerModal
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        onSelect={(media) => {
+          update("featured_image_url", media.url);
+          setIsMediaPickerOpen(false);
+        }}
+        currentUrl={form.featured_image_url}
+      />
     </AdminDrawer>
   );
 }

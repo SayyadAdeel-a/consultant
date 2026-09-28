@@ -97,7 +97,7 @@ export default async function AdminLayout({
         </div>
       </header>
       <div className="flex min-h-[calc(100vh-3.5rem)]">
-        <aside className="border-border bg-background hidden w-60 shrink-0 border-r lg:block">
+        <aside className="admin-desktop-sidebar border-border bg-background hidden w-60 shrink-0 border-r lg:block">
           <AdminNav />
         </aside>
         <div className="flex-1 p-4 sm:p-6 lg:p-10 min-w-0">{children}</div>

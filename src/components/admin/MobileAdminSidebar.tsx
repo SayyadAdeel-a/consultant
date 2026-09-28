@@ -12,13 +12,15 @@ import { usePathname } from "next/navigation";
  * Closes automatically on route change.
  */
 export function MobileAdminSidebar() {
-  const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
 
   // Close on route change
-  useEffect(() => {
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   // Prevent body scroll when open
   useEffect(() => {
